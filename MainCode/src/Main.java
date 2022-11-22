@@ -1,6 +1,9 @@
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.layout.StackPane;
+import javafx.scene.control.Label;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.scene.control.Button;
 
@@ -12,15 +15,29 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        StackPane layout = new StackPane();
+        primaryStage.setTitle("Software Engineering Jobs Database");
+
+        // Setting up tabs
+        TabPane tabPane = new TabPane();
+
+        tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE); // removing close button from tabs
+
+        Tab tab1 = new Tab("Planes", new Label("Show all planes available"));
+        Tab tab2 = new Tab("Cars"  , new Label("Show all cars available"));
+        Tab tab3 = new Tab("Boats" , new Label("Show all boats available"));
+
+        tabPane.getTabs().addAll(tab1, tab2, tab3);
+
+        VBox vBox = new VBox(tabPane);
 
         Button button = new Button("Click Me");
-        layout.getChildren().add(button);
+        vBox.getChildren().add(button);
 
-        Scene scene = new Scene(layout, 300, 300);
+        Scene scene = new Scene(vBox);
 
         primaryStage.setScene(scene);
-        primaryStage.setTitle("Title of Window");
+        primaryStage.setMaximized(true);
+
         primaryStage.show();
     }
 }
