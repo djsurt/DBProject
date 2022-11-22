@@ -1,9 +1,6 @@
 import javafx.application.Application;
-import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -29,24 +26,17 @@ public class Main extends Application {
 
         VBox mainBox = new VBox(tabPane);
 
+        final int PADDING = 10;
+
         // Setting up the insert tab
-        VBox vbox1 = new VBox();
-
-        insertTab.setContent(vbox1);
-        vbox1.setPadding(new Insets(10));
-
-        ComboBox<String> comboBox = TableDropdown.getComboBox();
-
-        vbox1.getChildren().addAll(comboBox);
+        TabWindow insertWindow = new TabWindow(PADDING);
+        VBox insertBox = insertWindow.vBox();
+        insertTab.setContent(insertBox);
 
         // Setting up the delete tab
-        VBox vbox2 = new VBox();
-        deleteTab.setContent(vbox2);
-        vbox2.setPadding(new Insets(10));
-
-        ComboBox<String> comboBox2 = TableDropdown.getComboBox();
-
-        vbox2.getChildren().addAll(comboBox2);
+        TabWindow deleteWindow = new TabWindow(PADDING);
+        VBox deleteBox = deleteWindow.vBox();
+        deleteTab.setContent(deleteBox);
 
         // Setting up the stage
         Scene scene = new Scene(mainBox);
