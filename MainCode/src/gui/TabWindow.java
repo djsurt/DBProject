@@ -1,7 +1,5 @@
 package gui;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.GridPane;
@@ -14,10 +12,7 @@ import javafx.scene.layout.VBox;
 public final class TabWindow {
 
     private VBox vbox;
-
-    private static ObservableList<String> options = FXCollections.observableArrayList("Option 1", "Option 2", "Option 3");
-    private ComboBox<String> comboBox;
-
+    private ComboBox<Table> comboBox;
     private Pane activePane;
 
     private final int PADDING;
@@ -37,7 +32,9 @@ public final class TabWindow {
         activePane = gridPane;
 
         // ComboBox
-        comboBox = new ComboBox<>(options);
+        comboBox = new ComboBox<>();
+        comboBox.getItems().setAll(Table.values());
+
         comboBox.getSelectionModel().select(0); // set the default to the first option
         comboBox.setOnAction(e -> {
             comboBox.getValue();
@@ -51,9 +48,5 @@ public final class TabWindow {
 
     public VBox vBox() {
         return vbox;
-    }
-
-    public ComboBox<String> comboBox() {
-        return comboBox;
     }
 }
