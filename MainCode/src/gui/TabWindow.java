@@ -25,25 +25,33 @@ public final class TabWindow {
         vbox = new VBox();
         vbox.setPadding(new Insets(padding));
 
-        // Pane
-        PaneManager paneManager = new PaneManager("Hello", PADDING, "Field 1", "Field 2");
-        GridPane gridPane = paneManager.gridPane();
-
-        activePane = gridPane;
-
         // ComboBox
         comboBox = new ComboBox<>();
         comboBox.getItems().setAll(Table.values());
 
         comboBox.getSelectionModel().select(0); // set the default to the first option
+
+        PaneManager defaultPaneManager = new PaneManager("comp_id", "name", "hq_location", "tier", "industry", "num_employees", "revenue");
+
+        activePane = defaultPaneManager.gridPane();
+
+                defaultPaneManager.gridPane();
+
         comboBox.setOnAction(e -> {
-            comboBox.getValue();
+            GridPane newActivePane = getActivePane(comboBox.getValue());
 
             vbox.getChildren().remove(activePane);
+            vbox.getChildren().add(newActivePane);
+
+            activePane = newActivePane;
         });
 
         // Add all components
-        vbox.getChildren().addAll(comboBox, gridPane);
+        vbox.getChildren().addAll(comboBox, activePane);
+    }
+
+    private GridPane getActivePane(Table key) {
+        return PaneManager.paneMap.get(key).gridPane();
     }
 
     public VBox vBox() {
