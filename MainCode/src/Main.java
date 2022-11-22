@@ -1,6 +1,6 @@
 import javafx.application.Application;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.VBox;
@@ -22,21 +22,27 @@ public class Main extends Application {
 
         tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE); // removing close button from tabs
 
-        Tab tab1 = new Tab("Planes", new Label("Show all planes available"));
-        Tab tab2 = new Tab("Cars"  , new Label("Show all cars available"));
-        Tab tab3 = new Tab("Boats" , new Label("Show all boats available"));
+        Tab tab1 = new Tab("Planes");
+        Tab tab2 = new Tab("Cars");
+        Tab tab3 = new Tab("Boat");
 
         tabPane.getTabs().addAll(tab1, tab2, tab3);
 
-        VBox vBox = new VBox(tabPane);
+        VBox mainBox = new VBox(tabPane);
 
         Button button = new Button("Click Me");
-        vBox.getChildren().add(button);
 
-        Scene scene = new Scene(vBox);
+        VBox vbox1 = new VBox();
+        tab1.setContent(vbox1);
+
+        vbox1.getChildren().add(button);
+        vbox1.setPadding(new Insets(10));
+
+        // Setting up the stage
+        Scene scene = new Scene(mainBox);
 
         primaryStage.setScene(scene);
-        primaryStage.setMaximized(true);
+        primaryStage.setMaximized(true); // makes window take up full screen
 
         primaryStage.show();
     }
