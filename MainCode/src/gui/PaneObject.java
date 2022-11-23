@@ -21,7 +21,7 @@ public class PaneObject {
         gridPane.setHgap(PADDING);
         gridPane.setVgap(PADDING);
         gridPane.setPadding(new Insets(PADDING));
-        gridPane.setMinHeight(500);
+        gridPane.setMaxHeight(fields.length * 15);
 
         for(int i = 0; i < fields.length; i++) {
             String labelText = fields[i];
