@@ -18,13 +18,13 @@ public class Main extends Application {
 
         // Setting up tabs
         TabPane tabPane = new TabPane();
-
         tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE); // removing close button from tabs
 
+        Tab getStartedTab = new Tab("Get Started");
         Tab insertTab = new Tab("Insert");
         Tab deleteTab = new Tab("Delete");
 
-        tabPane.getTabs().addAll(insertTab, deleteTab);
+        tabPane.getTabs().addAll(getStartedTab, insertTab, deleteTab);
 
         VBox mainBox = new VBox(tabPane);
 

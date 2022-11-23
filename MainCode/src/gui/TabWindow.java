@@ -11,9 +11,10 @@ import javafx.scene.layout.VBox;
  */
 public final class TabWindow {
 
-    private VBox vbox;
-    private ComboBox<Table> comboBox;
-    private Pane activePane;
+    private VBox vbox = new VBox();
+    private PaneManager paneManager = new PaneManager();
+    private ComboBox<Table> comboBox = new ComboBox<>();
+    private GridPane activePane;
 
     private final int PADDING;
 
@@ -22,23 +23,16 @@ public final class TabWindow {
         this.PADDING = padding;
 
         // VBox
-        vbox = new VBox();
         vbox.setPadding(new Insets(padding));
 
         // ComboBox
-        comboBox = new ComboBox<>();
         comboBox.getItems().setAll(Table.values());
-
         comboBox.getSelectionModel().select(0); // set the default to the first option
 
-        PaneManager defaultPaneManager = new PaneManager("comp_id", "name", "hq_location", "tier", "industry", "num_employees", "revenue");
-
-        activePane = defaultPaneManager.gridPane();
-
-                defaultPaneManager.gridPane();
+        activePane = paneManager.gridPane(comboBox.getValue());
 
         comboBox.setOnAction(e -> {
-            GridPane newActivePane = getActivePane(comboBox.getValue());
+            GridPane newActivePane = paneManager.gridPane(comboBox.getValue());
 
             vbox.getChildren().remove(activePane);
             vbox.getChildren().add(newActivePane);
@@ -50,9 +44,9 @@ public final class TabWindow {
         vbox.getChildren().addAll(comboBox, activePane);
     }
 
-    private GridPane getActivePane(Table key) {
-        return PaneManager.paneMap.get(key).gridPane();
-    }
+//    private GridPane getActivePane(Table key) {
+//        return PaneObject.paneMap.get(key).gridPane();
+//    }
 
     public VBox vBox() {
         return vbox;
