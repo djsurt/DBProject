@@ -9,6 +9,8 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 
+
+
     public static void main(String[] args) {
         Application.launch(args);
     }
@@ -33,6 +35,11 @@ public class Main extends Application {
         final int PADDING = 10;
 
         DoubleExpression vboxHeight = primaryStage.heightProperty().multiply(.9);
+
+        // Setting up the get started tab
+        GetStartedWindow getStartedWindow = new GetStartedWindow(PADDING, vboxHeight);
+        VBox getStartedBox = getStartedWindow.vBox();
+        getStartedTab.setContent(getStartedBox);
 
         // Setting up the insert tab
         TabWindow insertWindow = new TabWindow(PADDING, vboxHeight);

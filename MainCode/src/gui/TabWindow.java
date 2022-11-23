@@ -25,13 +25,6 @@ public final class TabWindow {
         vbox.setPadding(new Insets(padding)); // main VBox
         vbox.prefHeightProperty().bind(vboxHeight);
 
-//        String cssLayout =
-//                "-fx-border-color: red;\n" +
-//                "-fx-border-insets: 5;\n" +
-//                "-fx-border-width: 3;";
-//
-//        vbox.setStyle(cssLayout);
-
         form.setPadding(new Insets(padding)); // main VBox
 
         // ComboBox
