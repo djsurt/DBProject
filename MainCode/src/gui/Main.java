@@ -40,19 +40,19 @@ public class Main extends Application {
         getStartedTab.setContent(getStartedBox);
 
         // Setting up the insert tab
-        TabWindow insertWindow = new TabWindow(PADDING, vboxHeight);
+        InsertWindow insertWindow = new InsertWindow(PADDING, vboxHeight);
         VBox insertBox = insertWindow.vBox();
         insertTab.setContent(insertBox);
 
-        // Setting up the delete tab
-        TabWindow deleteWindow = new TabWindow(PADDING, vboxHeight);
-        VBox deleteBox = deleteWindow.vBox();
-        deleteTab.setContent(deleteBox);
-
-        // Setting up the update tab
-        TabWindow updateWindow = new TabWindow(PADDING, vboxHeight);
-        VBox updateBox = updateWindow.vBox();
-        updateTab.setContent(updateBox);
+//        // Setting up the delete tab
+//        TabWindow deleteWindow = new TabWindow(PADDING, vboxHeight);
+//        VBox deleteBox = deleteWindow.vBox();
+//        deleteTab.setContent(deleteBox);
+//
+//        // Setting up the update tab
+//        TabWindow updateWindow = new TabWindow(PADDING, vboxHeight);
+//        VBox updateBox = updateWindow.vBox();
+//        updateTab.setContent(updateBox);
 
         // Setting up the stage
         Scene scene = new Scene(mainBox);
