@@ -12,8 +12,9 @@ public class GetStartedWindow {
 
     private VBox vbox = new VBox();
 
-    private final Font headingFont = Font.font("Helvetica", FontWeight.BOLD, FontPosture.REGULAR, 30);
-    private final Font normalFont = Font.font("Helvetica", FontWeight.NORMAL, FontPosture.REGULAR, 15);
+    private final String fontFamily = "Helvetica";
+    private final Font headingFont = Font.font(fontFamily, FontWeight.BOLD, FontPosture.REGULAR, 30);
+    private final Font normalFont = Font.font(fontFamily, FontWeight.NORMAL, FontPosture.REGULAR, 15);
 
     public GetStartedWindow(int padding, DoubleExpression vboxHeight) {
         vbox.setPadding(new Insets(padding));

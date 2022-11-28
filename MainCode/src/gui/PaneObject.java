@@ -5,13 +5,13 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class PaneObject {
 
     private GridPane gridPane = new GridPane();
-    private Map<Label, TextField> textFieldMap = new HashMap<>();
+    private Map<Label, TextField> textFieldMap = new LinkedHashMap<>();
 
     private final int PADDING = 10;
 
@@ -35,7 +35,17 @@ public class PaneObject {
         }
     }
 
+    /**
+     * @return GridPane
+     */
     public GridPane gridPane() {
         return gridPane;
+    }
+
+    /**
+     * @return a map with Labels as keys and the corresponding TextField as values
+     */
+    public Map<Label, TextField> textFieldMap() {
+        return textFieldMap;
     }
 }

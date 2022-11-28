@@ -5,10 +5,13 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 
 import java.util.EnumMap;
+import java.util.Map;
 
 /**
  * A class for generating JavaFX ComboBox with all the different tables inside of it
@@ -53,6 +56,38 @@ public final class InsertWindow {
         // Add button
         Button button = new Button("Insert");
         button.setAlignment(Pos.BOTTOM_CENTER);
+
+        button.setOnAction(e -> {
+            PaneObject current = paneMap.get(comboBox.getValue());
+
+            Map<Label, TextField> textFieldMap = current.textFieldMap();
+
+            StringBuilder builder = new StringBuilder();
+
+            String separator = "";
+            boolean success = true;
+
+            // Get the values from the textFieldMap and convert to a comma-separated list
+            for(TextField textField : textFieldMap.values()) {
+
+                String text = textField.getText();
+
+                if(text.isEmpty()) {
+                    success = false;
+                    break;
+                }
+
+                builder.append(separator);
+                separator = ", ";
+                builder.append(text);
+            }
+
+            if(success){
+                System.out.println(builder);
+            } else {
+                System.out.println("ERROR: Some fields were empty");
+            }
+        });
 
         // Add all components
         vbox.getChildren().addAll(comboBox, form, button);
