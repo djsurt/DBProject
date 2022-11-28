@@ -37,7 +37,7 @@ public final class TabWindow {
         form.getChildren().add(activePane);
 
         // Add button
-        Button button = new Button("Click me");
+        Button button = new Button("Insert");
         button.setAlignment(Pos.BOTTOM_CENTER);
 
         // Add all components

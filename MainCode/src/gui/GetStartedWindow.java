@@ -23,10 +23,10 @@ public class GetStartedWindow {
         Text headingText = new Text("Computer Science Jobs Database");
         headingText.setFont(headingFont);
 
-
         Text bodyText = new Text(
                 "CSDS 341: Introduction to Database Systems | Fall 2022 with Professor Dianne Foreback \n\nCreated by Eric Elizes, Omar Loudghiri, Georgia Martinez, Sam Michalski, and Dhananjay Surti"
         );
+        bodyText.setFont(normalFont);
         bodyText.setLineSpacing(3);
 
         vbox.getChildren().addAll(headingText, bodyText);
