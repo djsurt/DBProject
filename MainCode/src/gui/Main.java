@@ -23,14 +23,15 @@ public class Main extends Application {
 
         Tab getStartedTab = new Tab("Get Started");
         Tab insertTab = new Tab("Insert");
+        Tab searchTab = new Tab("Search");
         Tab deleteTab = new Tab("Delete");
         Tab updateTab = new Tab("Update");
 
-        tabPane.getTabs().addAll(getStartedTab, insertTab, deleteTab, updateTab);
+        tabPane.getTabs().addAll(getStartedTab, insertTab, searchTab, deleteTab, updateTab);
 
         VBox mainBox = new VBox(tabPane);
 
-        final int PADDING = 10;
+        final int PADDING = 20;
 
         DoubleExpression vboxHeight = primaryStage.heightProperty().multiply(.9);
 
@@ -43,6 +44,11 @@ public class Main extends Application {
         InsertWindow insertWindow = new InsertWindow(PADDING, vboxHeight);
         VBox insertBox = insertWindow.vBox();
         insertTab.setContent(insertBox);
+
+        // Setting up the search tab
+        SearchWindow searchWindow = new SearchWindow(PADDING, vboxHeight);
+        VBox searchBox = searchWindow.vBox();
+        searchTab.setContent(searchBox);
 
 //        // Setting up the delete tab
 //        TabWindow deleteWindow = new TabWindow(PADDING, vboxHeight);

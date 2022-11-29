@@ -3,7 +3,7 @@ package gui;
 import java.util.Arrays;
 import java.util.List;
 
-public enum Table {
+public enum Relation {
 
     COMPANY(Arrays.asList("company_id")),
     JOBS(Arrays.asList()),
@@ -18,7 +18,7 @@ public enum Table {
 
     private List<String> primaryKeys;
 
-    Table(List<String> primaryKeys) {
+    Relation(List<String> primaryKeys) {
         this.primaryKeys = primaryKeys;
     }
 }

@@ -13,16 +13,13 @@ import javafx.scene.layout.VBox;
 import java.util.EnumMap;
 import java.util.Map;
 
-/**
- * A class for generating JavaFX ComboBox with all the different tables inside of it
- */
 public final class InsertWindow {
 
     private final VBox vbox = new VBox(); // main VBox
     private final VBox form = new VBox(); // has the form text fields inside
 
-    private final EnumMap<Table, PaneObject> paneMap = new EnumMap<>(Table.class);
-    private final ComboBox<Table> comboBox = new ComboBox<>();
+    private final EnumMap<Relation, PaneObject> paneMap = new EnumMap<>(Relation.class);
+    private final ComboBox<Relation> comboBox = new ComboBox<>();
     private GridPane activePane;
 
     public InsertWindow(int padding, DoubleExpression vboxHeight) {
@@ -32,10 +29,10 @@ public final class InsertWindow {
         vbox.setPadding(new Insets(padding)); // main VBox
         vbox.prefHeightProperty().bind(vboxHeight);
 
-        form.setPadding(new Insets(padding)); // main VBox
+        form.setPadding(new Insets(padding));
 
         // ComboBox
-        comboBox.getItems().setAll(Table.values());
+        comboBox.getItems().setAll(Relation.values());
         comboBox.getSelectionModel().select(0); // set the default to the first option
 
         // Set the active pane
@@ -97,9 +94,9 @@ public final class InsertWindow {
      * Fills the paneMap with predesignated keys and values (should be called in this class' constructor)
      */
     private void initializeMap() {
-        paneMap.put(Table.COMPANY, new PaneObject("comp_id", "name", "hq_location", "tier", "industry", "num_employees", "revenue"));
-        paneMap.put(Table.JOBS, new PaneObject("job_id", "comp_ID", "type", "role", "description", "total_compesantion", "required_yoe", "location", "cycle", "date_opened", "deadline"));
-        paneMap.put(Table.LOCATION, new PaneObject("country", "city", "state"));
+        paneMap.put(Relation.COMPANY, new PaneObject("comp_id", "name", "hq_location", "tier", "industry", "num_employees", "revenue"));
+        paneMap.put(Relation.JOBS, new PaneObject("job_id", "comp_ID", "type", "role", "description", "total_compesantion", "required_yoe", "location", "cycle", "date_opened", "deadline"));
+        paneMap.put(Relation.LOCATION, new PaneObject("country", "city", "state"));
     }
 
     /**
@@ -107,7 +104,7 @@ public final class InsertWindow {
      * @param key Table enum
      * @return GridPane object mapped to the given key
      */
-    private GridPane setActivePane(Table key) {
+    private GridPane setActivePane(Relation key) {
         return paneMap.get(key).gridPane();
     }
 
