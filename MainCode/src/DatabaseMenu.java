@@ -1,5 +1,5 @@
 import java.util.Scanner;
-import java.sql.*;  
+import java.sql.*;
 import java.util.ArrayList;
 
 public class DatabaseMenu {
@@ -90,7 +90,47 @@ public class DatabaseMenu {
     }
 
     public static void insertDataInterface() {
-        System.out.println("Insert Data");
+        /*
+        * Access database and launch menu of table options, receiving user input
+        */
+        ResultSet rs = getTableResultSet();
+        ArrayList<String> options = getTablesFromRS(rs);
+        int input = launchMenu( "Table Menu - Choose a table to INSERT into", options);
+
+        /*
+        * Let user choose columns to select 
+        */
+        if (input != options.size()) {
+            /*
+             * Access database and get columns in selected table
+             */
+            String tableName = options.get(input - 1);
+            ResultSetMetaData rsmd = getColumnRSMDFromTable(rs, tableName);
+
+            // Display list of required insert information
+            ArrayList<String> columns = getColumnsFromRSMD(rsmd);
+            ArrayList<String> types = mapSQLTypeArrayToString(getColumnTypesFromRSMD(rsmd));
+
+            ArrayList<ArrayList<String>> columnInfo = new ArrayList<>();
+            columnInfo.add(columns);
+            columnInfo.add(types);
+
+            System.out.println("The table " + tableName + " requires the following values:");
+            System.out.println(formatAsTable(columnInfo));
+
+            ArrayList<String> values = new ArrayList<String>();
+            for (int i = 0; i < columns.size(); i++) {
+                String col = columns.get(i);
+                String type = types.get(i);
+
+                System.out.println("Please insert a value for " + col + " of type " + type + "...");
+                String strInput = sc.next();
+
+                values.add(strInput);
+            }
+            
+            insertData(values, columns, tableName);
+        }
     }
 
     public static void updateDataInterface() {
@@ -98,88 +138,52 @@ public class DatabaseMenu {
     }
 
     public static void deleteDataInterface() {
-        System.out.println("Delete Data");
-    }
-
-    public static void selectDataInterface(Scanner sc) {
         /*
-        * Access data to query
+        * Access database and launch menu of table options, receiving user input
         */
-        ResultSet rs = null;
-        try {
-            DatabaseMetaData data = conn.getMetaData();
-            rs = data.getTables(null, "dbo", null, new String[]{"TABLE"});
-        }
-        catch(SQLException e) {
-            System.out.println("SQL Exception Error: Occured at selectDataInterface during creation of resultSet.");
-        }
-
-        /*
-         * Print menu
-         */
-        ArrayList<String> options = new ArrayList<>();
-
-        // Add all valid options
-        try {
-            while(rs.next())
-            {
-                options.add(rs.getString("TABLE_NAME"));
-            }
-        } 
-        catch (SQLException e) {
-            System.out.println("SQL Exception Error: Occured at selectDataInterface while printing table menu.");
-        }
-
-        options.add("GO BACK");
-
-        /*
-         * Initializes a menu and collects user input
-         */
-        int input = launchMenu( "Table Menu - Select Data", options);
+        ResultSet rs = getTableResultSet();
+        ArrayList<String> options = getTablesFromRS(rs);
+        int input = launchMenu( "Table Menu - Choose a table to DELETE from", options);
 
         /*
         * Let user choose columns to select 
         */
         if (input != options.size()) {
+            /*
+            * Access database and launch menu of column options, receiving user input
+            */
             String tableName = options.get(input - 1);
-
-            /*
-             * Access database for column names
-             */
-            ResultSetMetaData rsmd = null;
-            try {
-                Statement stmt = conn.createStatement();
-                rs = stmt.executeQuery("select * from " + tableName);
-                rsmd = rs.getMetaData();
-            }
-            catch (SQLException e) {
-                System.out.println("SQL Exception Error: Occured at selectDataInterface while accessing column names.");
-            }
-            
-            /*
-             * Populate list of column options to select from
-             */
-            ArrayList<String> columns = new ArrayList<String>();
-
-            try {
-                int count = rsmd.getColumnCount();
-                for(int i = 1; i <= count; i++) {
-                   columns.add(rsmd.getColumnName(i));
-                }
-            }
-            catch (SQLException e) {
-                System.out.println("SQL Exception Error: Occured at selectDataInterface while populating column options.");
-            }
-
-            // Add options * 
+            ResultSetMetaData rsmd = getColumnRSMDFromTable(rs, tableName);
+            ArrayList<String> columns = getColumnsFromRSMD(rsmd);
             columns.add("*");
+            int colInput = launchMenu(tableName + " Column Menu - Choose a column to DELETE from", columns);
+        }
 
+
+    }
+
+    public static void selectDataInterface(Scanner sc) {
+        /*
+        * Access database and launch menu of table options, receiving user input
+        */
+        ResultSet rs = getTableResultSet();
+        ArrayList<String> options = getTablesFromRS(rs);
+        int input = launchMenu( "Table Menu - Choose a table to SELECT from", options);
+
+        /*
+        * Let user choose columns to select 
+        */
+        if (input != options.size()) {
             /*
-             * Receive input from user 
-             */
+            * Access database and launch menu of column options, receiving user input
+            */
+            String tableName = options.get(input - 1);
+            ResultSetMetaData rsmd = getColumnRSMDFromTable(rs, tableName);
+            ArrayList<String> columns = getColumnsFromRSMD(rsmd);
+            columns.add("*");
+            int colInput = launchMenu(tableName + " Column Menu - Choose a column to SELECT from (you will be given the opportunity to choose more)", columns);
+            
             ArrayList<String> output = new ArrayList<String>();
-            int colInput = launchMenu("Column Menu - Select A Column from " + tableName, columns);
-
             // CASE 1: if star is selected, add it alone to output
             if (colInput == columns.size()) {
                 output.add(columns.get(colInput - 1));
@@ -209,22 +213,58 @@ public class DatabaseMenu {
     * ArrayList<String> values - represents each value in the inserted tuple
     * String tableName - table to insert into
     */
-    public static void insertData(ArrayList<String> values, String tableName) {
+    public static void insertData(ArrayList<String> values, ArrayList<String> columns, String tableName) {
         /*
          * Create Query
          */
-        String query = "INSERT INTO " + tableName + "values (" + parseWithDelimiter(values) + ")";
+        ArrayList<String> placeholders = new ArrayList<>();
+        for (int i = 0; i < values.size(); i++) {
+            placeholders.add("?");
+        }
 
+        String query = "INSERT INTO " + tableName + "(" + parseWithDelimiter(columns) +") values (" + parseWithDelimiter(placeholders) + ")";
+        System.out.println(query);
+        
         /*
          * Execute Query
          */
         try{
-            Statement stmt = conn.createStatement();
-            stmt.executeQuery(query);
-            System.out.println("Successfully Inserted Values: " + parseWithDelimiter(values));
+            ResultSet rs = getTableResultSet();
+            ResultSetMetaData rsmd = getColumnRSMDFromTable(rs, tableName);
+            ArrayList<String> types = getColumnTypesFromRSMD(rsmd);
+            PreparedStatement pstmt = conn.prepareStatement(query);
+
+            for (int i = 0; i < values.size(); i++) {
+                String value = values.get(i);
+                String type = types.get(i);
+
+                // If varchar<50>
+                if (type.equals("12")) {
+                    pstmt.setString(i + 1, value);
+                }
+                // If Integer
+                else if (type.equals("4")) {
+                    pstmt.setInt(i + 1, Integer.parseInt(value));
+                }
+                // If DATE
+                else if (type.equals("91")) {
+                    pstmt.setDate(i + 1, java.sql.Date.valueOf(value));
+                }
+                else { // Covers 4, which is date
+                    pstmt.setString(i + 1, value);
+                }
+            }
+
+            int res = pstmt.executeUpdate();
+            if (res == 1) {
+                System.out.println("Successfully Inserted Values: " + parseWithDelimiter(values));
+            }
+            else {
+                System.out.println("Insertion failed.");
+            }
         }
         catch (SQLException e) {
-            System.out.println("SQL Statement Error in insertData()");
+            e.printStackTrace();
         }
     }
 
@@ -270,7 +310,7 @@ public class DatabaseMenu {
             colCount = rsmd.getColumnCount();
         }
         catch (SQLException e) {
-            System.out.println("SQL Statement Error in selectData() with initial access.");
+            e.printStackTrace();
         }
 
         /*
@@ -290,7 +330,7 @@ public class DatabaseMenu {
             }
         }
         catch (SQLException e) {
-            System.out.println("SQL Statement Error in selectData() with headers.");       
+            e.printStackTrace();     
         }
         output.add(headers);
 
@@ -307,11 +347,41 @@ public class DatabaseMenu {
             }   
         }
         catch (SQLException e) {
-            System.out.println("SQL Statement Error in selectData() with data.");       
+            e.printStackTrace();    
         }
 
         // Print output
         System.out.println(formatAsTable(output));
+    }
+
+    /*
+     * Maps an ArrayList of String representing SQL Type codes to the String values of the type
+     */
+    public static ArrayList<String> mapSQLTypeArrayToString(ArrayList<String> types) {
+        ArrayList<String> output = new ArrayList<>();
+        for (String type : types) {
+            output.add(mapSQLTypeToString(type));
+        }
+
+        return output;
+    }
+
+    /*
+     * Maps an String SQL Type Code representing SQL Type to the String name of the type
+     */
+    public static String mapSQLTypeToString(String sqlType) {
+        if (sqlType.equals("12")) {
+            return "Varchar";
+        }
+        else if (sqlType.equals("4")) {
+            return "Integer";
+        }
+        else if (sqlType.equals("91")) {
+            return "Date (yyyy-MM-dd)";
+        }
+        else {
+            return "err";
+        }
     }
 
     /*
@@ -327,6 +397,94 @@ public class DatabaseMenu {
             }
         }
         return output;
+    }
+
+    /*
+     * Returns the ResultSet with all table names
+     */
+    public static ResultSet getTableResultSet() {
+        ResultSet rs = null;
+        try {
+            DatabaseMetaData data = conn.getMetaData();
+            rs = data.getTables(null, "dbo", null, new String[]{"TABLE"});
+        }
+        catch(SQLException e) {
+            e.printStackTrace();
+        }
+
+        return rs;
+    }
+
+    public static ResultSetMetaData getColumnRSMDFromTable(ResultSet rs, String tableName) {
+        ResultSetMetaData rsmd = null;
+        try {
+            Statement stmt = conn.createStatement();
+            rs = stmt.executeQuery("select * from " + tableName);
+            rsmd = rs.getMetaData();
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return rsmd;
+    }
+
+    /*
+     * Returns an ArrayList<String> of tables in the ResultSet
+     */
+    public static ArrayList<String> getTablesFromRS(ResultSet rs) {
+        ArrayList<String> options = new ArrayList<>();
+
+        // Add all valid options
+        try {
+            while(rs.next())
+            {
+                options.add(rs.getString("TABLE_NAME"));
+            }
+        } 
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        options.add("GO BACK");
+
+        return options;
+
+    }
+
+    /*
+     * Returns an ArrayList<String> of columns in the ResultSetMetaData
+     */
+    public static ArrayList<String> getColumnsFromRSMD(ResultSetMetaData rsmd) {
+        ArrayList<String> columns = new ArrayList<String>();
+
+        try {
+            int count = rsmd.getColumnCount();
+            for(int i = 1; i <= count; i++) {
+               columns.add(rsmd.getColumnName(i));
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return columns;
+    }
+
+    public static ArrayList<String> getColumnTypesFromRSMD(ResultSetMetaData rsmd) {
+        ArrayList<String> types = new ArrayList<String>();
+
+        try {
+            int count = rsmd.getColumnCount();
+            for(int i = 1; i <= count; i++) {
+               types.add(String.valueOf(rsmd.getColumnType(i)));
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return types;
     }
 
     /*
