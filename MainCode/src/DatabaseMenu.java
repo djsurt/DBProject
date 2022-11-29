@@ -1,9 +1,6 @@
 import java.util.Scanner;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;  
+import java.util.ArrayList;
 
 
 public class DatabaseMenu {
@@ -15,19 +12,18 @@ public class DatabaseMenu {
         
         String connectionUrl = 
         "jdbc:sqlserver://localhost;"
-                + "database=university;"
+                + "database=CSJobsInterface;"
                 + "user=dbuser;"
                 + "password=scsd431134dscs;"
                 + "encrypt=true;"
                 + "trustServerCertificate=true;"
                 + "loginTimeout=30;";
 
-        Connection conn;
-        Statement statement;
+        Connection conn = null;
+        Statement statement = null;
         try {
             System.out.println("Connecting to database...");
             conn = DriverManager.getConnection(connectionUrl);
-            statement = conn.createStatement();
             System.out.println("Connection established...");
 
         }
@@ -45,14 +41,14 @@ public class DatabaseMenu {
         int input;
         while(loop) {
             System.out.println("--------------------------------------");
-            System.out.println("Database Menu - Input number of choice");
+            System.out.println("Database Menu");
             System.out.println("[1] Reset Database");
             System.out.println("[2] Insert Data");
             System.out.println("[3] Update Data");
             System.out.println("[4] Delete Data");
             System.out.println("[5] Select Data");
-            System.out.println("[6] Quit");
-
+            System.out.println("[6] QUIT");
+            System.out.println("Select a numeric option and hit Enter...");
             // Store text input from CLI
             input = sc.nextInt();
 
@@ -61,16 +57,16 @@ public class DatabaseMenu {
                     resetDatabase();
                     break;
                 case 2:
-                    insertData();
+                    insertDataInterface();
                     break;
                 case 3:
-                    updateData();
+                    updateDataInterface();
                     break;
                 case 4:
-                    deleteData();
+                    deleteDataInterface();
                     break;
                 case 5:
-                    selectData();
+                    selectDataInterface(conn, sc);
                     break;
                 case 6:
                     System.out.println("Exiting...");
@@ -88,19 +84,120 @@ public class DatabaseMenu {
         System.out.println("Reset Database");
     }
 
-    public static void insertData() {
+    public static void insertDataInterface() {
         System.out.println("Insert Data");
     }
 
-    public static void updateData() {
+    public static void updateDataInterface() {
         System.out.println("Update Data");
     }
 
-    public static void deleteData() {
+    public static void deleteDataInterface() {
         System.out.println("Delete Data");
     }
 
-    public static void selectData() {
+    public static void selectDataInterface(Connection conn, Scanner sc) {
+        System.out.println("--------------------------------------");
         System.out.println("Select Data");
+
+        try {
+            /*
+             * Let user choose table to select data from
+             */
+            DatabaseMetaData data = conn.getMetaData();
+            ResultSet resultSet = data.getTables(null, "dbo", null, new String[]{"TABLE"});
+            
+            // Print Table Menu
+            System.out.println("Table Menu");
+            System.out.println("----------------------------------");
+
+            int count = 1;
+            ArrayList<String> tableNames = new ArrayList<String>();
+            while(resultSet.next())
+            {
+                String tableName = resultSet.getString("TABLE_NAME");
+
+                tableNames.add(tableName);
+                System.out.println("[" + count + "] " + tableName);
+                count += 1;
+            }
+            System.out.println("[" + count + "] GO BACK");
+            System.out.println("Select a numeric option and hit Enter...");
+
+            // Receive table selection input
+            int input = sc.nextInt();
+            while (input < 1 || input > count) {
+                System.out.println("Please input a valid option.");
+                input = sc.nextInt();
+            }
+
+            /*
+             * Let user choose columns to select 
+             */
+            if (input != count) {
+                String tableName = tableNames.get(input - 1);
+                
+
+            }
+
+        }   
+        catch (SQLException e) {
+            System.out.println("SQL Exception in selectData");
+        }
+    }
+
+    // ArrayList<String> values - represents each value in the inserted tuple
+    // String tableName - table to insert into
+    public static void insertData(ArrayList<String> values, String tableName) {
+
+    }
+
+    // ArrayList<String> values - represents each value in the inserted tuple
+    // String tableName - table to update
+    public static void updateData() {
+
+    }
+
+    // ArrayList<String> primarykey - list values representing the primary key to delete
+    // String tableName - table to delete from
+    public static void deleteData() {
+
+    }
+
+    // ArrayList<String> columns - list of column names to select
+    // String tableName - table to select from
+    public static void selectData(Connection conn, ArrayList<String> columns, String tableName) {
+        // Create Query
+        String columns_parsed = "";
+        for (int i = 0; i < columns.size(); i++) {
+            columns_parsed += columns.get(i);
+
+            if (i != columns.size() - 1) {
+                columns_parsed +=  ", ";
+            }
+        }
+        String query = "select " + columns_parsed + " from " + tableName;
+        
+        // Execute Query
+        try {
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+
+            // Iterate over each row
+            while (rs.next()) {
+                // Iterate over each value and print
+                for (int i = 0; i < columns.size(); i++) {
+                    if (i < columns.size() - 1) {
+                        System.out.print(rs.getString(columns.get(i)) + ", ");
+                    }
+                    else {
+                        System.out.println(rs.getString(columns.get(i)));
+                    }
+                }
+            }
+        }
+        catch (SQLException e) {
+            System.out.println("SQL Statement Error in selectData()");
+        }
     }
 }
