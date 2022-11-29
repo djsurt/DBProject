@@ -136,7 +136,8 @@ public class DatabaseMenu {
              */
             if (input != count) {
                 String tableName = tableNames.get(input - 1);
-                
+                ArrayList<String> columns = new ArrayList<String>();
+                selectData(conn, )
 
             }
 
@@ -154,13 +155,13 @@ public class DatabaseMenu {
 
     // ArrayList<String> values - represents each value in the inserted tuple
     // String tableName - table to update
-    public static void updateData() {
+    public static void updateData(ArrayList<String> values, String tableName) {
 
     }
 
     // ArrayList<String> primarykey - list values representing the primary key to delete
     // String tableName - table to delete from
-    public static void deleteData() {
+    public static void deleteData(ArrayList<String> primarykey, String tableName) {
 
     }
 
@@ -183,18 +184,23 @@ public class DatabaseMenu {
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(query);
 
-            // Iterate over each row
-            while (rs.next()) {
-                // Iterate over each value and print
-                for (int i = 0; i < columns.size(); i++) {
-                    if (i < columns.size() - 1) {
-                        System.out.print(rs.getString(columns.get(i)) + ", ");
-                    }
-                    else {
-                        System.out.println(rs.getString(columns.get(i)));
+            if (columns_parsed == "*") {
+                
+            }
+                else {
+                // Iterate over each row
+                while (rs.next()) {
+                    // Iterate over each value and print
+                    for (int i = 0; i < columns.size(); i++) {
+                        if (i < columns.size() - 1) {
+                            System.out.print(rs.getString(columns.get(i)) + ", ");
+                        }
+                        else {
+                            System.out.println(rs.getString(columns.get(i)));
+                        }
                     }
                 }
-            }
+                }
         }
         catch (SQLException e) {
             System.out.println("SQL Statement Error in selectData()");
