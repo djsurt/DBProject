@@ -108,8 +108,8 @@ public class DatabaseMenu {
             ResultSet resultSet = data.getTables(null, "dbo", null, new String[]{"TABLE"});
             
             // Print Table Menu
-            System.out.println("Table Menu");
             System.out.println("----------------------------------");
+            System.out.println("Table Menu");
 
             int count = 1;
             ArrayList<String> tableNames = new ArrayList<String>();
@@ -186,38 +186,64 @@ public class DatabaseMenu {
             ResultSet rs = stmt.executeQuery(query);
 
             ResultSetMetaData rsmd = rs.getMetaData();
-            int columnsNumber = rsmd.getColumnCount();
+            int colCount = rsmd.getColumnCount();
 
-            while (rs.next()) {
-                
-                for (int i = 1; i <= columnsNumber; i++) {
-                    if (i > 1) System.out.print(",  ");
-                    String columnValue = rs.getString(i);
-                    System.out.print(columnValue + " " + rsmd.getColumnName(i));
-                }
-                System.out.println("");
-            }   
-            /*
-            if (columns_parsed == "*") {
-                
+            // Print Query Info
+            System.out.println("----------------------------------");
+            System.out.println("QUERY: " + query);
+            System.out.println("RESULT: ");
+
+            // Create output variable
+            ArrayList<ArrayList<String>> output = new ArrayList<>();
+
+            // Add column names to output
+            ArrayList<String> headers = new ArrayList<>();
+            for (int i = 1; i <= colCount; i++) {
+                headers.add(rsmd.getColumnName(i));
             }
-            else {
-                // Iterate over each row
-                while (rs.next()) {
-                    // Iterate over each value and print
-                    for (int i = 0; i < columns.size(); i++) {
-                        if (i < columns.size() - 1) {
-                            System.out.print(rs.getString(columns.get(i)) + ", ");
-                        }
-                        else {
-                            System.out.println(rs.getString(columns.get(i)));
-                        }
-                    }
+            output.add(headers);
+
+            // Add data to output
+            while (rs.next()) {
+                // Add current row of data to output
+                ArrayList<String> row = new ArrayList<>();
+
+                for (int i = 1; i <= colCount; i++) {
+                    row.add(rs.getString(i));
                 }
-            }*/
+                output.add(row);
+            }   
+
+            // Print output
+            System.out.println(formatAsTable(output));
         }
         catch (SQLException e) {
             System.out.println("SQL Statement Error in selectData()");
         }
+    }
+
+    /*
+     *  Formats and prints a nested ArrayList as a table
+     */
+    public static String formatAsTable(ArrayList<ArrayList<String>> rows) {
+        int[] maxLengths = new int[rows.get(0).size()];
+        for (ArrayList<String> row : rows) {
+            for (int i = 0; i < row.size(); i++)
+            {
+                maxLengths[i] = Math.max(maxLengths[i], row.get(i).length());
+            }
+        }
+
+        StringBuilder formatBuilder = new StringBuilder();
+        for (int maxLength : maxLengths) {
+            formatBuilder.append("%-").append(maxLength + 2).append("s");
+        }
+        String format = formatBuilder.toString();
+
+        StringBuilder result = new StringBuilder();
+        for (ArrayList<String> row : rows) {
+            result.append(String.format(format, row.toArray(new String[0]))).append("\n");
+        }
+        return result.toString();
     }
 }
