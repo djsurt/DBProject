@@ -137,7 +137,8 @@ public class DatabaseMenu {
             if (input != count) {
                 String tableName = tableNames.get(input - 1);
                 ArrayList<String> columns = new ArrayList<String>();
-                selectData(conn, )
+                columns.add("*");
+                selectData(conn, columns, tableName);
 
             }
 
@@ -184,10 +185,23 @@ public class DatabaseMenu {
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(query);
 
+            ResultSetMetaData rsmd = rs.getMetaData();
+            int columnsNumber = rsmd.getColumnCount();
+
+            while (rs.next()) {
+                
+                for (int i = 1; i <= columnsNumber; i++) {
+                    if (i > 1) System.out.print(",  ");
+                    String columnValue = rs.getString(i);
+                    System.out.print(columnValue + " " + rsmd.getColumnName(i));
+                }
+                System.out.println("");
+            }   
+            /*
             if (columns_parsed == "*") {
                 
             }
-                else {
+            else {
                 // Iterate over each row
                 while (rs.next()) {
                     // Iterate over each value and print
@@ -200,7 +214,7 @@ public class DatabaseMenu {
                         }
                     }
                 }
-                }
+            }*/
         }
         catch (SQLException e) {
             System.out.println("SQL Statement Error in selectData()");
