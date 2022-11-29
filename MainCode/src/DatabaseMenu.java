@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+
 public class DatabaseMenu {
     public static void main (String args[]) {
 
@@ -24,11 +25,14 @@ public class DatabaseMenu {
         Connection conn;
         Statement statement;
         try {
+            System.out.println("Connecting to database...");
             conn = DriverManager.getConnection(connectionUrl);
             statement = conn.createStatement();
+            System.out.println("Connection established...");
 
         }
         catch (SQLException e) {
+            System.out.println("Connection Failed:");
             e.printStackTrace();
         }    
         
