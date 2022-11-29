@@ -170,15 +170,7 @@ public class DatabaseMenu {
     // String tableName - table to select from
     public static void selectData(Connection conn, ArrayList<String> columns, String tableName) {
         // Create Query
-        String columns_parsed = "";
-        for (int i = 0; i < columns.size(); i++) {
-            columns_parsed += columns.get(i);
-
-            if (i != columns.size() - 1) {
-                columns_parsed +=  ", ";
-            }
-        }
-        String query = "select " + columns_parsed + " from " + tableName;
+        String query = "select " + parseWithDelimiter(columns) + " from " + tableName;
         
         // Execute Query
         try {
@@ -220,6 +212,21 @@ public class DatabaseMenu {
         catch (SQLException e) {
             System.out.println("SQL Statement Error in selectData()");
         }
+    }
+
+    /*
+     * Returns a String of the values of an ArrayList with a ", " delimeter 
+     */
+    public static String parseWithDelimiter(ArrayList<String> array){
+        String output = "";
+        for (int i = 0; i < array.size(); i++) {
+            output += array.get(i);
+
+            if (i != array.size() - 1) {
+                output +=  ", ";
+            }
+        }
+        return output;
     }
 
     /*
