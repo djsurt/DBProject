@@ -1,4 +1,9 @@
 import java.util.Scanner;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 public class DatabaseMenu {
     public static void main (String args[]) {
@@ -7,8 +12,26 @@ public class DatabaseMenu {
          *  Establish Connection to Database
          */
         
-         // CODE TO CONNECT TO DATABASE BELOW
+        String connectionUrl = 
+        "jdbc:sqlserver://localhost;"
+                + "database=university;"
+                + "user=dbuser;"
+                + "password=scsd431134dscs;"
+                + "encrypt=true;"
+                + "trustServerCertificate=true;"
+                + "loginTimeout=30;";
 
+        Connection conn;
+        Statement statement;
+        try {
+            conn = DriverManager.getConnection(connectionUrl);
+            statement = conn.createStatement();
+
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }    
+        
         /*
          *  Loop Menu of Database Options
          */
@@ -25,6 +48,7 @@ public class DatabaseMenu {
             System.out.println("[4] Delete Data");
             System.out.println("[5] Select Data");
             System.out.println("[6] Quit");
+
             // Store text input from CLI
             input = sc.nextInt();
 
