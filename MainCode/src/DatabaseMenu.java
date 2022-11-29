@@ -2,8 +2,9 @@ import java.util.Scanner;
 import java.sql.*;  
 import java.util.ArrayList;
 
-
 public class DatabaseMenu {
+
+    static Connection conn = null;
     public static void main (String args[]) {
 
         /*
@@ -19,8 +20,6 @@ public class DatabaseMenu {
                 + "trustServerCertificate=true;"
                 + "loginTimeout=30;";
 
-        Connection conn = null;
-        Statement statement = null;
         try {
             System.out.println("Connecting to database...");
             conn = DriverManager.getConnection(connectionUrl);
@@ -40,16 +39,22 @@ public class DatabaseMenu {
 
         int input;
         while(loop) {
-            System.out.println("--------------------------------------");
-            System.out.println("Database Menu");
-            System.out.println("[1] Reset Database");
-            System.out.println("[2] Insert Data");
-            System.out.println("[3] Update Data");
-            System.out.println("[4] Delete Data");
-            System.out.println("[5] Select Data");
-            System.out.println("[6] QUIT");
+            /*
+             * Print menu options
+             */
+            ArrayList<String> options = new ArrayList<>();
+            options.add("Reset Database");
+            options.add("Insert Data");
+            options.add("Update Data");
+            options.add("Delete Data");
+            options.add("Select Data");
+            options.add("QUIT");
+            printMenu(options, "Database Menu");
+
+            /*
+             * Receive text input from user
+             */
             System.out.println("Select a numeric option and hit Enter...");
-            // Store text input from CLI
             input = sc.nextInt();
 
             switch(input) {
@@ -66,7 +71,7 @@ public class DatabaseMenu {
                     deleteDataInterface();
                     break;
                 case 5:
-                    selectDataInterface(conn, sc);
+                    selectDataInterface(sc);
                     break;
                 case 6:
                     System.out.println("Exiting...");
@@ -96,106 +101,155 @@ public class DatabaseMenu {
         System.out.println("Delete Data");
     }
 
-    public static void selectDataInterface(Connection conn, Scanner sc) {
-        System.out.println("--------------------------------------");
-        System.out.println("Select Data");
-
+    public static void selectDataInterface(Scanner sc) {
+        /*
+        * Access data to query
+        */
+        ResultSet rs = null;
         try {
-            /*
-             * Let user choose table to select data from
-             */
             DatabaseMetaData data = conn.getMetaData();
-            ResultSet resultSet = data.getTables(null, "dbo", null, new String[]{"TABLE"});
-            
-            // Print Table Menu
-            System.out.println("----------------------------------");
-            System.out.println("Table Menu");
+            rs = data.getTables(null, "dbo", null, new String[]{"TABLE"});
+        }
+        catch(SQLException e) {
+            System.out.println("SQL Exception Error: Occured at selectDataInterface during creation of resultSet.");
+        }
 
-            int count = 1;
-            ArrayList<String> tableNames = new ArrayList<String>();
-            while(resultSet.next())
+        /*
+         * Print menu
+         */
+        ArrayList<String> options = new ArrayList<>();
+
+        // Add all valid options
+        try {
+            while(rs.next())
             {
-                String tableName = resultSet.getString("TABLE_NAME");
-
-                tableNames.add(tableName);
-                System.out.println("[" + count + "] " + tableName);
-                count += 1;
+                options.add(rs.getString("TABLE_NAME"));
             }
-            System.out.println("[" + count + "] GO BACK");
-            System.out.println("Select a numeric option and hit Enter...");
-
-            // Receive table selection input
-            int input = sc.nextInt();
-            while (input < 1 || input > count) {
-                System.out.println("Please input a valid option.");
-                input = sc.nextInt();
-            }
-
-            /*
-             * Let user choose columns to select 
-             */
-            if (input != count) {
-                String tableName = tableNames.get(input - 1);
-                ArrayList<String> columns = new ArrayList<String>();
-                columns.add("*");
-                selectData(conn, columns, tableName);
-
-            }
-
-        }   
+        } 
         catch (SQLException e) {
-            System.out.println("SQL Exception in selectData");
+            System.out.println("SQL Exception Error: Occured at selectDataInterface while printing table menu.");
+        }
+
+        options.add("GO BACK");
+
+        // Print options
+        printMenu(options, "Table Menu - Select Data");
+        System.out.println("Select a numeric option and hit Enter...");
+
+        /*
+         * Receive user input on selected option
+         */
+        int input = sc.nextInt();
+        while (input < 1 || input >= options.size() - 1) {
+            System.out.println("Please input a valid option.");
+            input = sc.nextInt();
+        }
+
+        /*
+        * Let user choose columns to select 
+        */
+        if (input != options.size() - 1) {
+            String tableName = options.get(input - 1);
+
+            ArrayList<String> columns = new ArrayList<String>();
+            columns.add("*");
+            selectData(columns, tableName);
+
         }
     }
 
-    // ArrayList<String> values - represents each value in the inserted tuple
-    // String tableName - table to insert into
+    /*
+    * insertData - inserts data into database
+    * ArrayList<String> values - represents each value in the inserted tuple
+    * String tableName - table to insert into
+    */
     public static void insertData(ArrayList<String> values, String tableName) {
+        /*
+         * Create Query
+         */
+        String query = "INSERT INTO " + tableName + "values (" + parseWithDelimiter(values) + ")";
 
+        /*
+         * Execute Query
+         */
+        try{
+            Statement stmt = conn.createStatement();
+            stmt.executeQuery(query);
+            System.out.println("Successfully Inserted Values: " + parseWithDelimiter(values));
+        }
+        catch (SQLException e) {
+            System.out.println("SQL Statement Error in insertData()");
+        }
     }
 
-    // ArrayList<String> values - represents each value in the inserted tuple
-    // String tableName - table to update
+    /*
+    * updateData - updates data from the database
+    * ArrayList<String> values - represents each value in the inserted tuple
+    * String tableName - table to update
+    */
     public static void updateData(ArrayList<String> values, String tableName) {
 
     }
 
-    // ArrayList<String> primarykey - list values representing the primary key to delete
-    // String tableName - table to delete from
+    /* 
+    * deleteData - deletes data from the database
+    * ArrayList<String> primarykey - list values representing the primary key to delete
+    * String tableName - table to delete from
+    */
     public static void deleteData(ArrayList<String> primarykey, String tableName) {
 
     }
 
-    // ArrayList<String> columns - list of column names to select
-    // String tableName - table to select from
-    public static void selectData(Connection conn, ArrayList<String> columns, String tableName) {
-        // Create Query
+    /* 
+    * selectData - selects data from the database
+    * ArrayList<String> columns - list of column names to select
+    * String tableName - table to select from
+    */
+    public static void selectData(ArrayList<String> columns, String tableName) {
+        /*
+         * Create Query
+         */
         String query = "select " + parseWithDelimiter(columns) + " from " + tableName;
         
-        // Execute Query
+        /*
+         * Access database
+         */
+        ResultSet rs = null;
+        ResultSetMetaData rsmd = null;
+        int colCount = 0;
         try {
             Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(query);
+            rs = stmt.executeQuery(query);
+            rsmd = rs.getMetaData();
+            colCount = rsmd.getColumnCount();
+        }
+        catch (SQLException e) {
+            System.out.println("SQL Statement Error in selectData() with initial access.");
+        }
 
-            ResultSetMetaData rsmd = rs.getMetaData();
-            int colCount = rsmd.getColumnCount();
+        /*
+         * Print query result
+         */
+        System.out.println("----------------------------------");
+        System.out.println("QUERY: " + query);
+        System.out.println("RESULT: ");
 
-            // Print Query Info
-            System.out.println("----------------------------------");
-            System.out.println("QUERY: " + query);
-            System.out.println("RESULT: ");
+        ArrayList<ArrayList<String>> output = new ArrayList<>();
+        ArrayList<String> headers = new ArrayList<>();
 
-            // Create output variable
-            ArrayList<ArrayList<String>> output = new ArrayList<>();
-
-            // Add column names to output
-            ArrayList<String> headers = new ArrayList<>();
+        // Add header information to ouput
+        try {
             for (int i = 1; i <= colCount; i++) {
                 headers.add(rsmd.getColumnName(i));
             }
-            output.add(headers);
+        }
+        catch (SQLException e) {
+            System.out.println("SQL Statement Error in selectData() with headers.");       
+        }
+        output.add(headers);
 
-            // Add data to output
+        // Add data to output
+        try {
             while (rs.next()) {
                 // Add current row of data to output
                 ArrayList<String> row = new ArrayList<>();
@@ -205,13 +259,13 @@ public class DatabaseMenu {
                 }
                 output.add(row);
             }   
-
-            // Print output
-            System.out.println(formatAsTable(output));
         }
         catch (SQLException e) {
-            System.out.println("SQL Statement Error in selectData()");
+            System.out.println("SQL Statement Error in selectData() with data.");       
         }
+
+        // Print output
+        System.out.println(formatAsTable(output));
     }
 
     /*
@@ -227,6 +281,34 @@ public class DatabaseMenu {
             }
         }
         return output;
+    }
+
+    /*
+     * Prints a formatted menu based off the menu options and the menuName
+     */
+    public static void printMenu(ArrayList<String> options, String menuName) {
+        System.out.println("----------------------------------");
+        System.out.println(menuName);
+
+        // Create output
+        ArrayList<ArrayList<String>> output = new ArrayList<>();
+
+        // Add headers to output
+        ArrayList<String> headers = new ArrayList<>();
+        headers.add("#");
+        headers.add("Option");
+        output.add(headers);
+
+        // Add options to output
+        for (int i = 0; i < options.size(); i++) {
+            ArrayList<String> row = new ArrayList<>();
+            row.add("[" + (i + 1) + "]");
+            row.add(options.get(i));
+            output.add(row);        
+        }
+
+        // Print output
+        System.out.println(formatAsTable(output));
     }
 
     /*
