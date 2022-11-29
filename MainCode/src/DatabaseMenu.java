@@ -5,6 +5,7 @@ import java.util.ArrayList;
 public class DatabaseMenu {
 
     static Connection conn = null;
+    static Scanner sc = null;
     public static void main (String args[]) {
 
         /*
@@ -34,7 +35,7 @@ public class DatabaseMenu {
         /*
          *  Loop Menu of Database Options
          */
-        Scanner sc = new Scanner(System.in);
+        sc = new Scanner(System.in);
         boolean loop = true;
 
         int input;
@@ -49,12 +50,11 @@ public class DatabaseMenu {
             options.add("Delete Data");
             options.add("Select Data");
             options.add("QUIT");
-            printMenu(options, "Database Menu");
+            printMenu("Database Menu", options);
 
             /*
              * Receive text input from user
              */
-            System.out.println("Select a numeric option and hit Enter...");
             input = sc.nextInt();
 
             switch(input) {
@@ -132,29 +132,75 @@ public class DatabaseMenu {
 
         options.add("GO BACK");
 
-        // Print options
-        printMenu(options, "Table Menu - Select Data");
-        System.out.println("Select a numeric option and hit Enter...");
-
         /*
-         * Receive user input on selected option
+         * Initializes a menu and collects user input
          */
-        int input = sc.nextInt();
-        while (input < 1 || input >= options.size() - 1) {
-            System.out.println("Please input a valid option.");
-            input = sc.nextInt();
-        }
+        int input = launchMenu( "Table Menu - Select Data", options);
 
         /*
         * Let user choose columns to select 
         */
-        if (input != options.size() - 1) {
+        if (input != options.size()) {
             String tableName = options.get(input - 1);
 
+            /*
+             * Access database for column names
+             */
+            ResultSetMetaData rsmd = null;
+            try {
+                Statement stmt = conn.createStatement();
+                rs = stmt.executeQuery("select * from " + tableName);
+                rsmd = rs.getMetaData();
+            }
+            catch (SQLException e) {
+                System.out.println("SQL Exception Error: Occured at selectDataInterface while accessing column names.");
+            }
+            
+            /*
+             * Populate list of column options to select from
+             */
             ArrayList<String> columns = new ArrayList<String>();
-            columns.add("*");
-            selectData(columns, tableName);
 
+            try {
+                int count = rsmd.getColumnCount();
+                for(int i = 1; i <= count; i++) {
+                   columns.add(rsmd.getColumnName(i));
+                }
+            }
+            catch (SQLException e) {
+                System.out.println("SQL Exception Error: Occured at selectDataInterface while populating column options.");
+            }
+
+            // Add options * 
+            columns.add("*");
+
+            /*
+             * Receive input from user 
+             */
+            ArrayList<String> output = new ArrayList<String>();
+            int colInput = launchMenu("Column Menu - Select A Column from " + tableName, columns);
+
+            // CASE 1: if star is selected, add it alone to output
+            if (colInput == columns.size()) {
+                output.add(columns.get(colInput - 1));
+            }
+            // CASE 2: if star is not selected, add selection to output, remove from columns, and replace * with STOP ADDING COLUMNS
+            else {
+                String curr = columns.get(colInput - 1);
+                columns.remove(columns.size() - 1);
+                columns.add("STOP ADDING COLUMNS");
+
+                // Loop through options while not STOP ADDING COLUMNS
+                while (colInput != columns.size()) {
+                    output.add(curr);
+                    columns.remove(colInput - 1);
+
+                    colInput = launchMenu("Column Menu - Select A Column from " + tableName, columns);
+                    curr = columns.get(colInput - 1);
+                }
+            }
+            
+            selectData(output, tableName);
         }
     }
 
@@ -284,9 +330,27 @@ public class DatabaseMenu {
     }
 
     /*
+     * Prints a menu based off menuName and menu options and collects user input
+     */
+    public static int launchMenu(String menuName, ArrayList<String> options) {
+        printMenu(menuName, options);
+
+        /*
+         * Receive valid user input
+         */
+        int input = sc.nextInt();
+        while (input < 1 || input > options.size()) {
+            System.out.println("Please input a valid option.");
+            input = sc.nextInt();
+        }
+
+        return input;
+    }
+
+    /*
      * Prints a formatted menu based off the menu options and the menuName
      */
-    public static void printMenu(ArrayList<String> options, String menuName) {
+    public static void printMenu(String menuName, ArrayList<String> options) {
         System.out.println("----------------------------------");
         System.out.println(menuName);
 
@@ -309,6 +373,7 @@ public class DatabaseMenu {
 
         // Print output
         System.out.println(formatAsTable(output));
+        System.out.println("Select a numeric option and hit Enter...");
     }
 
     /*
