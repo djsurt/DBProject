@@ -1,4 +1,4 @@
-package gui;
+package dbproject.gui;
 
 import java.util.Arrays;
 import java.util.List;

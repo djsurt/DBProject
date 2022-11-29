@@ -1,17 +1,19 @@
-package gui;
+package dbproject.gui;
+
+import dbproject.*;
 
 import javafx.beans.binding.DoubleExpression;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 
+import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public final class InsertWindow {
 
@@ -54,37 +56,7 @@ public final class InsertWindow {
         Button button = new Button("Insert");
         button.setAlignment(Pos.BOTTOM_CENTER);
 
-        button.setOnAction(e -> {
-            PaneObject current = paneMap.get(comboBox.getValue());
-
-            Map<Label, TextField> textFieldMap = current.textFieldMap();
-
-            StringBuilder builder = new StringBuilder();
-
-            String separator = "";
-            boolean success = true;
-
-            // Get the values from the textFieldMap and convert to a comma-separated list
-            for(TextField textField : textFieldMap.values()) {
-
-                String text = textField.getText();
-
-                if(text.isEmpty()) {
-                    success = false;
-                    break;
-                }
-
-                builder.append(separator);
-                separator = ", ";
-                builder.append(text);
-            }
-
-            if(success){
-                System.out.println(builder);
-            } else {
-                System.out.println("ERROR: Some fields were empty");
-            }
-        });
+        button.setOnAction(e -> insertData());
 
         // Add all components
         vbox.getChildren().addAll(comboBox, form, button);
@@ -113,5 +85,22 @@ public final class InsertWindow {
      */
     public VBox vBox() {
         return vbox;
+    }
+
+    /**
+     * Inserts data into the database
+     */
+    private void insertData() {
+        PaneObject current = paneMap.get(comboBox.getValue());
+
+        Map<Label, TextField> textFieldMap = current.textFieldMap();
+
+        ArrayList<String> values = textFieldMap.values().stream().map(field -> field.getText()).collect(Collectors.toCollection(ArrayList::new));
+
+        ArrayList<String> columns = textFieldMap.keySet().stream().map(label -> label.getText()).collect(Collectors.toCollection(ArrayList::new));
+
+        String tableName = comboBox.getValue().toString();
+
+        DatabaseMenu.insertData(values, columns, tableName);
     }
 }

@@ -1,14 +1,8 @@
-package gui;
+package dbproject.gui;
 
-import gui.relations.Location;
-import gui.relations.TableManager;
+import dbproject.gui.relations.TableManager;
 import javafx.beans.binding.DoubleExpression;
 import javafx.geometry.Insets;
-import javafx.geometry.Orientation;
-import javafx.scene.control.ScrollBar;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
 import javafx.scene.layout.VBox;
 
 public class SearchWindow {

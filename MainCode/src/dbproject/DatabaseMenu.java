@@ -1,3 +1,5 @@
+package dbproject;
+
 import java.util.Scanner;
 import java.sql.*;
 import java.util.ArrayList;

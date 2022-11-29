@@ -1,4 +1,4 @@
-package gui.relations;
+package dbproject.gui.relations;
 
 public class Location {
 

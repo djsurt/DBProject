@@ -1,4 +1,4 @@
-package gui;
+package dbproject.gui;
 
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
