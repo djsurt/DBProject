@@ -1,17 +1,22 @@
 package gui;
 
+import gui.relations.Location;
+import gui.relations.TableManager;
 import javafx.beans.binding.DoubleExpression;
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
+import javafx.scene.control.ScrollBar;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.VBox;
-
-import java.util.Locale;
 
 public class SearchWindow {
 
     private final VBox vbox = new VBox(); // main VBox
     private final VBox tableBox = new VBox(); // contains the table
+
+    private final TableManager tableManager = new TableManager();
 
     public SearchWindow(int padding, DoubleExpression vboxHeight) {
         vbox.setPadding(new Insets(padding)); // main VBox
@@ -19,16 +24,14 @@ public class SearchWindow {
 
         tableBox.setPadding(new Insets(padding)); // main VBox
 
-        TableView table = new TableView();
-        table.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
+        tableBox.getChildren().add(tableManager.getTable(Relation.LOCATION));
 
-        TableColumn firstNameCol = new TableColumn("First Name");
-        TableColumn lastNameCol = new TableColumn("Last Name");
-        TableColumn emailCol = new TableColumn("Email");
-
-        table.getColumns().addAll(firstNameCol, lastNameCol, emailCol);
-
-        tableBox.getChildren().addAll(table);
+//        ScrollPane scrollPane = new ScrollPane(tableManager.getTable(Relation.LOCATION));
+//        scrollPane.setFitToWidth(true);
+//        scrollPane.setFitToHeight(true);
+//
+//        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+//        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
 
         // Add all components
         vbox.getChildren().addAll(tableBox);
