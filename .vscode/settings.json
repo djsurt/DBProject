@@ -1,6 +1,7 @@
 {
     "java.project.sourcePaths": [
-        "MainCode/src/dbproject"
+        "MainCode/src/dbproject",
+        "MainCode/src"
     ],
     "java.project.outputPath": "bin",
     "java.project.referencedLibraries": [
