@@ -10,7 +10,11 @@ import java.util.stream.Collectors;
 
 public class InsertPanel {
 
-    private final EnumMap<Relation, InsertForm> formMap = new EnumMap<>(Relation.class);
+    private final EnumMap<Relation, InsertForm> formMap = new EnumMap<>(Map.of(
+            Relation.COMPANY, new InsertForm("company_id", "name", "hq_location", "tier", "industry", "num_employees"),
+            Relation.JOBS, new InsertForm("job_id", "company_id", "type", "role", "description", "benefit_id", "required_yoe", "location_id", "cycle", "date_opened"),
+            Relation.LOCATION, new InsertForm("location_id", "country", "city", "state")
+    ));
 
     private JPanel activePanel;
     private JPanel mainPanel = new JPanel();
@@ -19,7 +23,7 @@ public class InsertPanel {
 
     public InsertPanel() {
 
-        initializeMap();
+//        initializeMap();
 
         Box verticalBox = Box.createVerticalBox();
 
@@ -41,15 +45,6 @@ public class InsertPanel {
 
         mainPanel.add(verticalBox);
         mainPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-    }
-
-    /**
-     * Fills the formMap with predesignated keys and values (should be called in this class' constructor)
-     */
-    private void initializeMap() {
-        formMap.put(Relation.COMPANY, new InsertForm("company_id", "name", "hq_location", "tier", "industry", "num_employees"));
-        formMap.put(Relation.JOBS, new InsertForm("job_id", "company_id", "type", "role", "description", "benefit_id", "required_yoe", "location_id", "cycle", "date_opened"));
-        formMap.put(Relation.LOCATION, new InsertForm("location_id", "country", "city", "state"));
     }
 
     /**
@@ -92,7 +87,7 @@ public class InsertPanel {
 
         String tableName = comboBox.getSelectedItem().toString();
 
-        // DatabaseMenu.insertData(values, columns, tableName);
+//         DatabaseMenu.insertData(values, columns, tableName);
     }
 
 }

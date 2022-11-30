@@ -15,7 +15,7 @@ public class RunGUI {
 
         JPanel getStarted = new GetStartedPanel().panel();
         JPanel insertPanel = new InsertPanel().panel();
-        JPanel searchPanel = new JPanel();
+        JPanel searchPanel = new SelectPanel().panel();
 
         tabbedPane.addTab("Get Started", getStarted);
         tabbedPane.addTab("Insert", insertPanel);
