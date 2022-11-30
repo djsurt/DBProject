@@ -87,6 +87,17 @@ public class InsertPanel {
 
         String tableName = comboBox.getSelectedItem().toString();
 
+        if(RunGUI.DEBUG) {
+            System.out.println("Table: " + tableName);
+
+            System.out.print("\ncolumns: ");
+            columns.stream().forEach(col -> System.out.print(col + " "));
+            System.out.println("\n");
+
+            System.out.print("Values: ");
+            values.stream().forEach(val -> System.out.print(val + " "));
+        }
+
 //         DatabaseMenu.insertData(values, columns, tableName);
     }
 

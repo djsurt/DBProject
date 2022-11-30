@@ -1,8 +1,13 @@
 package gui;
 
 import javax.swing.*;
+import java.sql.*;
 
 public class RunGUI {
+
+    //TODO: public final static DatabaseMenu = new DatabaseMenu();
+
+    public final static boolean DEBUG = false;
 
     public static void main(String[] args) {
         JFrame frame = new JFrame("Computer Science Jobs Database");
