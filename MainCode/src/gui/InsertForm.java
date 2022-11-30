@@ -14,7 +14,11 @@ public class InsertForm {
     public InsertForm(String... fields) {
 
         grid = new GridLayout(fields.length, 2);
+        grid.setVgap(5);
+        grid.setHgap(10);
+
         panel.setLayout(grid);
+        panel.setPreferredSize(new Dimension(500, fields.length * 30));
 
         for(int i = 0; i < fields.length; i++) {
             String labelText = fields[i];
