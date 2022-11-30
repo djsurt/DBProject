@@ -1,6 +1,4 @@
-package dbproject.gui;
-
-import dbproject.*;
+package gui;
 
 import javafx.beans.binding.DoubleExpression;
 import javafx.geometry.Insets;
@@ -101,6 +99,6 @@ public final class InsertWindow {
 
         String tableName = comboBox.getValue().toString();
 
-        DatabaseMenu.insertData(values, columns, tableName);
+        // DatabaseMenu.insertData(values, columns, tableName);
     }
 }

@@ -1,4 +1,4 @@
-package dbproject.gui;
+package gui;
 
 import javafx.application.Application;
 import javafx.beans.binding.DoubleExpression;

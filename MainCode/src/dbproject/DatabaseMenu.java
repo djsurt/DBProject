@@ -1,4 +1,4 @@
-package dbproject;
+// package dbproject;
 
 import java.util.Scanner;
 import java.sql.*;
