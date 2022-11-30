@@ -49,6 +49,7 @@ public class DatabaseMenu {
             options.add("Update Data");
             options.add("Delete Data");
             options.add("Select Data");
+            options.add("Special Select Statements");
             options.add("QUIT");
             printMenu("Database Menu", options);
 
@@ -71,9 +72,11 @@ public class DatabaseMenu {
                     deleteDataInterface();
                     break;
                 case 5:
-                    selectDataInterface(sc);
+                    selectDataInterface();
                     break;
                 case 6:
+                    specialSelectInterface();
+                case 7:
                     System.out.println("Exiting...");
                     sc.close();
                     System.exit(0);
@@ -85,8 +88,20 @@ public class DatabaseMenu {
         sc.close();
     }
 
+    /*
+     * Empties all tables and inserts the initial records back into the database
+     */
     public static void resetDatabase() {
-        System.out.println("Reset Database");
+        String callStoredProc = "{call dbo.FullDatabaseReset()}";
+
+        try (CallableStatement prepsStoredProc = conn.prepareCall(callStoredProc);) {
+            prepsStoredProc.execute();
+            System.out.println("Database successfully reset.");
+        }
+        // Handle any errors that may have occurred.
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void insertDataInterface() {
@@ -285,7 +300,7 @@ public class DatabaseMenu {
 
     }
 
-    public static void selectDataInterface(Scanner sc) {
+    public static void selectDataInterface() {
         /*
         * Access database and launch menu of table options, receiving user input
         */
@@ -329,6 +344,12 @@ public class DatabaseMenu {
             
             selectData(output, tableName);
         }
+    }
+    /*
+    * specialSelectInterface - runs the special select menu
+    */
+    public static void specialSelectInterface() {
+
     }
 
     /*
