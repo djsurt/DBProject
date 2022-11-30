@@ -280,10 +280,62 @@ public class DatabaseMenu {
     /* 
     * deleteData - deletes data from the database
     * ArrayList<String> primarykey - list values representing the primary key to delete
+    * ArrayList<String> columns - represents the 
     * String tableName - table to delete from
     */
-    public static void deleteData(ArrayList<String> primarykey, String tableName) {
+    public static void deleteData(ArrayList<String> values, ArrayList<String> primarykey, String tableName) {
+        /*
+         * Create Query
+         */
+        ArrayList<String> placeholders = new ArrayList<>();
+        for (int i = 0; i < values.size(); i++) {
+            placeholders.add("?");
+        }
 
+        String query = "DELETE FROM " + tableName + " WHERE " + parseWhereFormat(values, primarykey);
+        System.out.println(query);
+        
+        /*
+         * Execute Query
+         */
+        try{
+            ResultSet rs = getTableResultSet();
+            ResultSetMetaData rsmd = getColumnRSMDFromTable(rs, tableName);
+            ArrayList<String> types = getColumnTypesFromRSMD(rsmd);
+            PreparedStatement pstmt = conn.prepareStatement(query);
+
+            for (int i = 0; i < values.size(); i++) {
+                String value = values.get(i);
+                String type = types.get(i);
+
+                // If varchar<50>
+                if (type.equals("12")) {
+                    pstmt.setString(i + 1, value);
+                }
+                // If Integer
+                else if (type.equals("4")) {
+                    pstmt.setInt(i + 1, Integer.parseInt(value));
+                }
+                // If DATE
+                else if (type.equals("91")) {
+                    pstmt.setDate(i + 1, java.sql.Date.valueOf(value));
+                }
+                else { // Covers 4, which is date
+                    pstmt.setString(i + 1, value);
+                }
+            }
+
+            int res = pstmt.executeUpdate();
+            if (res == 1) {
+                System.out.println("Successfully Inserted Values: " + parseWithDelimiter(values));
+            }
+            else {
+                System.out.println("Insertion failed.");
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     /* 
@@ -382,6 +434,14 @@ public class DatabaseMenu {
         else {
             return "err";
         }
+    }
+
+    /*
+     * parseWher
+     * 
+     */
+    public static String parseWhereFormat(ArrayList<String> values, ArrayList<String> columns) {
+
     }
 
     /*
