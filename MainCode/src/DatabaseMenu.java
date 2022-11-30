@@ -134,7 +134,51 @@ public class DatabaseMenu {
     }
 
     public static void updateDataInterface() {
-        System.out.println("Update Data");
+        /*
+        * Access database and launch menu of table options, receiving user input
+        */
+        ResultSet rs = getTableResultSet();
+        ArrayList<String> options = getTablesFromRS(rs);
+        int input = launchMenu( "Table Menu - Choose a table to UPDATE", options);
+
+        /*
+        * Let user choose columns to select 
+        */
+        if (input != options.size()) {
+            /*
+            * Access database and launch menu of column options, receiving user input
+            */
+            String tableName = options.get(input - 1);
+            ResultSetMetaData rsmd = getColumnRSMDFromTable(rs, tableName);
+            ArrayList<String> columns = getColumnsFromRSMD(rsmd);
+
+            
+            columns.add("*");
+            int colInput = launchMenu(tableName + " Column Menu - Choose a column to SELECT from (you will be given the opportunity to choose more)", columns);
+            
+            ArrayList<String> output = new ArrayList<String>();
+            // CASE 1: if star is selected, add it alone to output
+            if (colInput == columns.size()) {
+                output.add(columns.get(colInput - 1));
+            }
+            // CASE 2: if star is not selected, add selection to output, remove from columns, and replace * with STOP ADDING COLUMNS
+            else {
+                String curr = columns.get(colInput - 1);
+                columns.remove(columns.size() - 1);
+                columns.add("STOP ADDING COLUMNS");
+
+                // Loop through options while not STOP ADDING COLUMNS
+                while (colInput != columns.size()) {
+                    output.add(curr);
+                    columns.remove(colInput - 1);
+
+                    colInput = launchMenu("Column Menu - Select A Column from " + tableName, columns);
+                    curr = columns.get(colInput - 1);
+                }
+            }
+            
+            //updateData(output, tableName);
+        }
     }
 
     public static void deleteDataInterface() {
@@ -150,15 +194,37 @@ public class DatabaseMenu {
         */
         if (input != options.size()) {
             /*
-            * Access database and launch menu of column options, receiving user input
+            * Access database and print primary key information
             */
             String tableName = options.get(input - 1);
-            ResultSetMetaData rsmd = getColumnRSMDFromTable(rs, tableName);
-            ArrayList<String> columns = getColumnsFromRSMD(rsmd);
-            columns.add("*");
-            int colInput = launchMenu(tableName + " Column Menu - Choose a column to DELETE from", columns);
-        }
+            rs = getPrimaryKeyResultSet(tableName);
+            ArrayList<String> columns = getPrimaryKeysFromRS(rs);
+            rs = getPrimaryKeyResultSet(tableName);
+            ArrayList<String> types = mapSQLTypeArrayToString(getPrimaryKeyTypesFromRS(rs));
 
+            ArrayList<ArrayList<String>> columnInfo = new ArrayList<>();
+            columnInfo.add(columns);
+            columnInfo.add(types);
+
+            System.out.println("The table " + tableName + " requires the following primary key values:");
+            System.out.println(formatAsTable(columnInfo));
+
+            /*
+             * Receive user input for each primary key
+             */
+            ArrayList<String> values = new ArrayList<String>();
+            for (int i = 0; i < columns.size(); i++) {
+                String col = columns.get(i);
+                String type = types.get(i);
+
+                System.out.println("Please insert a value for primary key " + col + " of type " + type + "...");
+                String strInput = sc.next();
+
+                values.add(strInput);
+            }
+            
+            deleteData(values, columns, tableName);
+        }
 
     }
 
@@ -273,29 +339,24 @@ public class DatabaseMenu {
     * ArrayList<String> values - represents each value in the inserted tuple
     * String tableName - table to update
     */
-    public static void updateData(ArrayList<String> values, String tableName) {
-
-    }
-
-    /* 
-    * deleteData - deletes data from the database
-    * ArrayList<String> primarykey - list values representing the primary key to delete
-    * ArrayList<String> columns - represents the 
-    * String tableName - table to delete from
-    */
-    public static void deleteData(ArrayList<String> values, ArrayList<String> primarykey, String tableName) {
+    public static void updateData(ArrayList<String> values, ArrayList<String> columns, ArrayList<String> pk_values, ArrayList<String> primarykeys, String tableName) {
         /*
-         * Create Query
-         */
-        ArrayList<String> placeholders = new ArrayList<>();
+        * Create Query
+        */
+        ArrayList<String> placeholders_col = new ArrayList<>();
         for (int i = 0; i < values.size(); i++) {
-            placeholders.add("?");
+            placeholders_col.add("?");
         }
 
-        String query = "DELETE FROM " + tableName + " WHERE " + parseWhereFormat(values, primarykey);
+        ArrayList<String> placeholders_pk = new ArrayList<>();
+        for (int i = 0; i < values.size(); i++) {
+            placeholders_pk.add("?");
+        }
+
+        String query = "UPDATE " + tableName + " SET " + parseWithDelimiterEquals(placeholders_col, columns) + " WHERE " + parseWithDelimiterEquals(placeholders_pk, primarykeys);
         System.out.println(query);
-        
-        /*
+
+        /* 
          * Execute Query
          */
         try{
@@ -327,10 +388,71 @@ public class DatabaseMenu {
 
             int res = pstmt.executeUpdate();
             if (res == 1) {
-                System.out.println("Successfully Inserted Values: " + parseWithDelimiter(values));
+                System.out.println("Successfully Updated Values: " + parseWithDelimiter(values));
             }
             else {
-                System.out.println("Insertion failed.");
+                System.out.println("Update failed.");
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /* 
+    * deleteData - deletes data from the database
+    * ArrayList<String> primarykey - list values representing the primary key to delete
+    * ArrayList<String> columns - represents the 
+    * String tableName - table to delete from
+    */
+    public static void deleteData(ArrayList<String> values, ArrayList<String> primarykey, String tableName) {
+        /*
+         * Create Query
+         */
+        ArrayList<String> placeholders = new ArrayList<>();
+        for (int i = 0; i < values.size(); i++) {
+            placeholders.add("?");
+        }
+
+        String query = "DELETE FROM " + tableName + " WHERE " + parseWithDelimiterEquals(placeholders, primarykey);
+        System.out.println(query);
+        
+        /*
+         * Execute Query
+         */
+        try{
+            ResultSet rs = getPrimaryKeyResultSet(tableName);
+            ResultSetMetaData rsmd = getColumnRSMDFromTable(rs, tableName);
+            ArrayList<String> types = getColumnTypesFromRSMD(rsmd);
+            PreparedStatement pstmt = conn.prepareStatement(query);
+            
+            for (int i = 0; i < values.size(); i++) {
+                String value = values.get(i);
+                String type = types.get(i);
+
+                // If varchar<50>
+                if (type.equals("12") || type.equals("1003")) {
+                    pstmt.setString(i + 1, value);
+                }
+                // If Integer
+                else if (type.equals("4")) {
+                    pstmt.setInt(i + 1, Integer.parseInt(value));
+                }
+                // If DATE
+                else if (type.equals("91")) {
+                    pstmt.setDate(i + 1, java.sql.Date.valueOf(value));
+                }
+                else { // Covers 4, which is date
+                    pstmt.setString(i + 1, value);
+                }
+            }
+
+            int res = pstmt.executeUpdate();
+            if (res == 1) {
+                System.out.println("Successfully Deleted Tuple: " + parseWithDelimiter(values));
+            }
+            else {
+                System.out.println("Deletion failed.");
             }
         }
         catch (SQLException e) {
@@ -422,7 +544,7 @@ public class DatabaseMenu {
      * Maps an String SQL Type Code representing SQL Type to the String name of the type
      */
     public static String mapSQLTypeToString(String sqlType) {
-        if (sqlType.equals("12")) {
+        if (sqlType.equals("12") || sqlType.equals("1003")) {
             return "Varchar";
         }
         else if (sqlType.equals("4")) {
@@ -437,11 +559,16 @@ public class DatabaseMenu {
     }
 
     /*
-     * parseWher
-     * 
+     * parseWithDelimiterEquals - parses the values and columns to suffice a WHERE statement
      */
-    public static String parseWhereFormat(ArrayList<String> values, ArrayList<String> columns) {
+    public static String parseWithDelimiterEquals(ArrayList<String> values, ArrayList<String> columns) {
+        ArrayList<String> output = new ArrayList<String>();
 
+        for (int i = 0; i < columns.size(); i++) {
+            output.add(columns.get(i) + "=" + values.get(i));
+        }
+
+        return parseWithDelimiter(output);
     }
 
     /*
@@ -475,6 +602,25 @@ public class DatabaseMenu {
         return rs;
     }
 
+    /*
+     * Returns the ResultSet of the primary key
+     */
+    public static ResultSet getPrimaryKeyResultSet(String tableName) {
+        ResultSet rs = null;
+        try {
+            DatabaseMetaData data = conn.getMetaData();
+            rs = data.getPrimaryKeys(null, null, tableName);
+        }
+        catch(SQLException e) {
+            e.printStackTrace();
+        }
+
+        return rs;
+    }
+
+    /*
+     * Returns the ResultSetMetaData from a specific table in the ResultSet rs
+     */
     public static ResultSetMetaData getColumnRSMDFromTable(ResultSet rs, String tableName) {
         ResultSetMetaData rsmd = null;
         try {
@@ -490,7 +636,7 @@ public class DatabaseMenu {
     }
 
     /*
-     * Returns an ArrayList<String> of tables in the ResultSet
+     * Returns an ArrayList<String> of tables in the ResultSet for Menu
      */
     public static ArrayList<String> getTablesFromRS(ResultSet rs) {
         ArrayList<String> options = new ArrayList<>();
@@ -510,6 +656,39 @@ public class DatabaseMenu {
 
         return options;
 
+    }
+
+    public static ArrayList<String> getPrimaryKeysFromRS(ResultSet rs) {
+        ArrayList<String> output = new ArrayList<>();
+
+        // Add all valid options
+        try {
+            while(rs.next())
+            {
+                output.add(rs.getString("COLUMN_NAME"));
+            }
+        } 
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return output;
+    }
+
+    public static ArrayList<String> getPrimaryKeyTypesFromRS(ResultSet rs) {
+        ArrayList<String> output = new ArrayList<>();
+        // Add all valid options
+        try {
+            while(rs.next())
+            {
+                output.add(String.valueOf(rs.getType()));
+            }
+        } 
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return output;
     }
 
     /*
