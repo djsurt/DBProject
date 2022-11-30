@@ -49,23 +49,8 @@ public class DatabaseMenu {
         );
 
         while(loop) {
-<<<<<<< HEAD
-            /*
-             * Print menu options
-             */
-            ArrayList<String> options = new ArrayList<>();
-            options.add("Reset Database");
-            options.add("Insert Data");
-            options.add("Update Data");
-            options.add("Delete Data");
-            options.add("Select Data");
-            options.add("Special Select Statements");
-            options.add("QUIT");
-            printMenu("Database Menu", options);
-=======
             // Print menu options
             printMenu("Database Menu", menuOptions);
->>>>>>> 0bfd73d550df27c0a3a60ecc809fc7be08002991
 
             /*
              * Receive text input from user
@@ -102,13 +87,8 @@ public class DatabaseMenu {
         sc.close();
     }
 
-<<<<<<< HEAD
     /*
      * Empties all tables and inserts the initial records back into the database
-=======
-    /**
-     * Reset the database
->>>>>>> 0bfd73d550df27c0a3a60ecc809fc7be08002991
      */
     public static void resetDatabase() {
         String callStoredProc = "{call dbo.FullDatabaseReset()}";
