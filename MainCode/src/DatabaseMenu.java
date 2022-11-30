@@ -1,3 +1,4 @@
+import java.util.List;
 import java.util.Scanner;
 import java.sql.*;
 import java.util.ArrayList;
@@ -6,21 +7,21 @@ public class DatabaseMenu {
 
     static Connection conn = null;
     static Scanner sc = null;
-    public static void main (String args[]) {
 
-        /*
-         *  Establish Connection to Database
-         */
-        
-        String connectionUrl = 
-        "jdbc:sqlserver://localhost;"
-                + "database=CSJobsInterface;"
-                + "user=dbuser;"
-                + "password=scsd431134dscs;"
-                + "encrypt=true;"
-                + "trustServerCertificate=true;"
-                + "loginTimeout=30;";
+    private static final String connectionUrl =
+            "jdbc:sqlserver://localhost;"
+                    + "database=CSJobsInterface;"
+                    + "user=dbuser;"
+                    + "password=scsd431134dscs;"
+                    + "encrypt=true;"
+                    + "trustServerCertificate=true;"
+                    + "loginTimeout=30;";
 
+    /**
+     * Establish a connection to a database
+     * @param connectionUrl url to connect to the database
+     */
+    private static void connectToDatabase(String connectionUrl) {
         try {
             System.out.println("Connecting to database...");
             conn = DriverManager.getConnection(connectionUrl);
@@ -30,16 +31,25 @@ public class DatabaseMenu {
         catch (SQLException e) {
             System.out.println("Connection Failed:");
             e.printStackTrace();
-        }    
+        }
+    }
+
+    public static void main (String args[]) {
+        connectToDatabase(connectionUrl);
         
         /*
          *  Loop Menu of Database Options
          */
         sc = new Scanner(System.in);
         boolean loop = true;
-
         int input;
+
+        List<String> menuOptions = List.of(
+                "Reset Database", "Insert Data", "Update data", "Delete data", "Select Data", "QUIT"
+        );
+
         while(loop) {
+<<<<<<< HEAD
             /*
              * Print menu options
              */
@@ -52,6 +62,10 @@ public class DatabaseMenu {
             options.add("Special Select Statements");
             options.add("QUIT");
             printMenu("Database Menu", options);
+=======
+            // Print menu options
+            printMenu("Database Menu", menuOptions);
+>>>>>>> 0bfd73d550df27c0a3a60ecc809fc7be08002991
 
             /*
              * Receive text input from user
@@ -88,8 +102,13 @@ public class DatabaseMenu {
         sc.close();
     }
 
+<<<<<<< HEAD
     /*
      * Empties all tables and inserts the initial records back into the database
+=======
+    /**
+     * Reset the database
+>>>>>>> 0bfd73d550df27c0a3a60ecc809fc7be08002991
      */
     public static void resetDatabase() {
         String callStoredProc = "{call dbo.FullDatabaseReset()}";
@@ -791,8 +810,11 @@ public class DatabaseMenu {
         return output;
     }
 
-    /*
+    /**
      * Returns an ArrayList<String> of columns in the ResultSetMetaData
+     *
+     * @param rsmd
+     * @return
      */
     public static ArrayList<String> getColumnsFromRSMD(ResultSetMetaData rsmd) {
         ArrayList<String> columns = new ArrayList<String>();
@@ -826,10 +848,14 @@ public class DatabaseMenu {
         return types;
     }
 
-    /*
+    /**
      * Prints a menu based off menuName and menu options and collects user input
+     *
+     * @param menuName Title of menu to be displayed
+     * @param options a list of options to display
+     * @return the input
      */
-    public static int launchMenu(String menuName, ArrayList<String> options) {
+    public static int launchMenu(String menuName, List<String> options) {
         printMenu(menuName, options);
 
         /*
@@ -844,10 +870,13 @@ public class DatabaseMenu {
         return input;
     }
 
-    /*
+    /**
      * Prints a formatted menu based off the menu options and the menuName
+     *
+     * @param menuName Title of menu to be displayed
+     * @param options a list of options to display
      */
-    public static void printMenu(String menuName, ArrayList<String> options) {
+    public static void printMenu(String menuName, List<String> options) {
         System.out.println("----------------------------------");
         System.out.println(menuName);
 
@@ -865,7 +894,7 @@ public class DatabaseMenu {
             ArrayList<String> row = new ArrayList<>();
             row.add("[" + (i + 1) + "]");
             row.add(options.get(i));
-            output.add(row);        
+            output.add(row);
         }
 
         // Print output
@@ -873,8 +902,11 @@ public class DatabaseMenu {
         System.out.println("Select a numeric option and hit Enter...");
     }
 
-    /*
-     *  Formats and prints a nested ArrayList as a table
+    /**
+     * Formats and prints a nested ArrayList as a table
+     *
+     * @param rows
+     * @return string version of what is printed
      */
     public static String formatAsTable(ArrayList<ArrayList<String>> rows) {
         int[] maxLengths = new int[rows.get(0).size()];
