@@ -1,6 +1,6 @@
-package dbproject.gui;
+package gui;
 
-import dbproject.gui.relations.TableManager;
+import gui.relations.TableManager;
 import javafx.beans.binding.DoubleExpression;
 import javafx.geometry.Insets;
 import javafx.scene.layout.VBox;

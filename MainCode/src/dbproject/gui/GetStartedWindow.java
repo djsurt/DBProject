@@ -1,4 +1,4 @@
-package dbproject.gui;
+package gui;
 
 import javafx.beans.binding.DoubleExpression;
 import javafx.geometry.Insets;

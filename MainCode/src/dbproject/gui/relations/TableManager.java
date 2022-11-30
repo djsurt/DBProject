@@ -1,6 +1,6 @@
-package dbproject.gui.relations;
+package gui.relations;
 
-import dbproject.gui.Relation;
+import gui.Relation;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
