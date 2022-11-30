@@ -8,7 +8,7 @@ public class DatabaseMenu {
     static Connection conn = null;
     static Scanner sc = null;
 
-    private final static String connectionUrl =
+    private static final String connectionUrl =
             "jdbc:sqlserver://localhost;"
                     + "database=CSJobsInterface;"
                     + "user=dbuser;"
@@ -34,10 +34,6 @@ public class DatabaseMenu {
         }
     }
 
-    private static List<String> menuOptions = List.of(
-      "Reset Database", "Insert Data", "Update data", "Delete data", "Select Data", "QUIT"
-    );
-
     public static void main (String args[]) {
         connectToDatabase(connectionUrl);
         
@@ -46,8 +42,12 @@ public class DatabaseMenu {
          */
         sc = new Scanner(System.in);
         boolean loop = true;
-
         int input;
+
+        List<String> menuOptions = List.of(
+                "Reset Database", "Insert Data", "Update data", "Delete data", "Select Data", "QUIT"
+        );
+
         while(loop) {
             // Print menu options
             printMenu("Database Menu", menuOptions);
@@ -818,7 +818,7 @@ public class DatabaseMenu {
      * @param options a list of options to display
      * @return the input
      */
-    public static int launchMenu(String menuName, ArrayList<String> options) {
+    public static int launchMenu(String menuName, List<String> options) {
         printMenu(menuName, options);
 
         /*
