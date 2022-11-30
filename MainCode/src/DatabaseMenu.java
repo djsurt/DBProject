@@ -119,12 +119,13 @@ public class DatabaseMenu {
             System.out.println(formatAsTable(columnInfo));
 
             ArrayList<String> values = new ArrayList<String>();
+            sc.nextLine();
             for (int i = 0; i < columns.size(); i++) {
                 String col = columns.get(i);
                 String type = types.get(i);
 
                 System.out.println("Please insert a value for " + col + " of type " + type + "...");
-                String strInput = sc.next();
+                String strInput = sc.nextLine();
 
                 values.add(strInput);
             }
@@ -146,38 +147,93 @@ public class DatabaseMenu {
         */
         if (input != options.size()) {
             /*
-            * Access database and launch menu of column options, receiving user input
+            * Access database and retrieve columns and types
             */
             String tableName = options.get(input - 1);
             ResultSetMetaData rsmd = getColumnRSMDFromTable(rs, tableName);
             ArrayList<String> columns = getColumnsFromRSMD(rsmd);
+            ArrayList<String> col_types = mapSQLTypeArrayToString(getColumnTypesFromRSMD(rsmd));
 
+            /*
+             * Access daatabase and retrieve primary keys and types
+             */
+            rs = getPrimaryKeyResultSet(tableName);
+            ArrayList<String> pk = getPrimaryKeysFromRS(rs);
+            rs = getPrimaryKeyResultSet(tableName);
+            ArrayList<String> pk_types = mapSQLTypeArrayToString(getPrimaryKeyTypesFromRS(rs));
+
+            /*
+             * Retrieve user input on which primary key values to update at
+             */
+            ArrayList<ArrayList<String>> columnInfo = new ArrayList<>();
+            columnInfo.add(pk);
+            columnInfo.add(pk_types);
+
+            System.out.println("The table " + tableName + " requires the following primary key values:");
+            System.out.println(formatAsTable(columnInfo));
+
+            ArrayList<String> pk_values = new ArrayList<String>();
+            sc.nextLine();
+            for (int i = 0; i < pk.size(); i++) {
+                String col = pk.get(i);
+                String type = pk_types.get(i);
+
+                System.out.println("Please insert a value for primary key " + col + " of type " + type + " to update at...");
+                String strInput = sc.nextLine();
+
+                pk_values.add(strInput);
+            }
             
-            columns.add("*");
-            int colInput = launchMenu(tableName + " Column Menu - Choose a column to SELECT from (you will be given the opportunity to choose more)", columns);
+            System.out.println("You will be updating values WHERE " + parseWithDelimiterEquals(pk_values, pk, ", "));
+
+            // Remove primary keys from columns
+            for (String key : pk) {
+                columns.remove(0);
+            }
+
+            /*
+             * Receive input from user on which columns to update
+             */
+            // CASE 1: STOP ADDING COLUMNS is not a menu option
+            int colInput = launchMenu(tableName + " Column Menu - Choose a column to UPDATE (you will be given the opportunity to choose more)", columns);
             
             ArrayList<String> output = new ArrayList<String>();
-            // CASE 1: if star is selected, add it alone to output
-            if (colInput == columns.size()) {
-                output.add(columns.get(colInput - 1));
-            }
-            // CASE 2: if star is not selected, add selection to output, remove from columns, and replace * with STOP ADDING COLUMNS
-            else {
-                String curr = columns.get(colInput - 1);
-                columns.remove(columns.size() - 1);
-                columns.add("STOP ADDING COLUMNS");
+            ArrayList<String> output_types = new ArrayList<String>();
+            String curr = columns.get(colInput - 1);
+            String curr_type = col_types.get(colInput - 1);
+            columns.add("STOP ADDING COLUMNS");
 
-                // Loop through options while not STOP ADDING COLUMNS
-                while (colInput != columns.size()) {
-                    output.add(curr);
-                    columns.remove(colInput - 1);
+            // CASE 2: Loop through options while not STOP ADDING COLUMNS
+            while (colInput != columns.size()) {
+                output.add(curr);
+                output_types.add(curr_type);
 
-                    colInput = launchMenu("Column Menu - Select A Column from " + tableName, columns);
-                    curr = columns.get(colInput - 1);
-                }
+                columns.remove(colInput - 1);
+                col_types.remove(colInput - 1);
+
+                colInput = launchMenu(tableName + " Column Menu - Select another column to UPDATE ", columns);
+                curr = columns.get(colInput - 1);
+                curr_type = col_types.get(colInput - 1);
             }
             
-            //updateData(output, tableName);
+            System.out.println("The following columns (" + parseWithDelimiter(output, ", ") + ") will be updated WHERE " + parseWithDelimiterEquals(pk_values, pk, ", "));
+
+            /*
+            * Receive user input for each column
+            */
+            ArrayList<String> values = new ArrayList<String>();
+            sc.nextLine();
+            for (int i = 0; i < output.size(); i++) {
+                String col = output.get(i);
+                String type = output_types.get(i);
+
+                System.out.println("Please insert a value for " + col + " of type " + type + "...");
+                String strInput = sc.nextLine();
+
+                values.add(strInput);
+            }
+
+            updateData(values, output, output_types, pk_values, pk, pk_types, tableName);
         }
     }
 
@@ -213,12 +269,13 @@ public class DatabaseMenu {
              * Receive user input for each primary key
              */
             ArrayList<String> values = new ArrayList<String>();
+            sc.nextLine();
             for (int i = 0; i < columns.size(); i++) {
                 String col = columns.get(i);
                 String type = types.get(i);
 
                 System.out.println("Please insert a value for primary key " + col + " of type " + type + "...");
-                String strInput = sc.next();
+                String strInput = sc.nextLine();
 
                 values.add(strInput);
             }
@@ -288,8 +345,7 @@ public class DatabaseMenu {
             placeholders.add("?");
         }
 
-        String query = "INSERT INTO " + tableName + "(" + parseWithDelimiter(columns) +") values (" + parseWithDelimiter(placeholders) + ")";
-        System.out.println(query);
+        String query = "INSERT INTO " + tableName + "(" + parseWithDelimiter(columns, ", ") +") values (" + parseWithDelimiter(placeholders, ", ") + ")";
         
         /*
          * Execute Query
@@ -299,7 +355,7 @@ public class DatabaseMenu {
             ResultSetMetaData rsmd = getColumnRSMDFromTable(rs, tableName);
             ArrayList<String> types = getColumnTypesFromRSMD(rsmd);
             PreparedStatement pstmt = conn.prepareStatement(query);
-
+            
             for (int i = 0; i < values.size(); i++) {
                 String value = values.get(i);
                 String type = types.get(i);
@@ -323,7 +379,7 @@ public class DatabaseMenu {
 
             int res = pstmt.executeUpdate();
             if (res == 1) {
-                System.out.println("Successfully Inserted Values: " + parseWithDelimiter(values));
+                System.out.println("Successfully Inserted Values: " + parseWithDelimiter(values, ", "));
             }
             else {
                 System.out.println("Insertion failed.");
@@ -339,7 +395,7 @@ public class DatabaseMenu {
     * ArrayList<String> values - represents each value in the inserted tuple
     * String tableName - table to update
     */
-    public static void updateData(ArrayList<String> values, ArrayList<String> columns, ArrayList<String> pk_values, ArrayList<String> primarykeys, String tableName) {
+    public static void updateData(ArrayList<String> values, ArrayList<String> columns, ArrayList<String> col_types, ArrayList<String> pk_values, ArrayList<String> primarykeys, ArrayList<String> pk_types, String tableName) {
         /*
         * Create Query
         */
@@ -349,26 +405,24 @@ public class DatabaseMenu {
         }
 
         ArrayList<String> placeholders_pk = new ArrayList<>();
-        for (int i = 0; i < values.size(); i++) {
+        for (int i = 0; i < primarykeys.size(); i++) {
             placeholders_pk.add("?");
         }
 
-        String query = "UPDATE " + tableName + " SET " + parseWithDelimiterEquals(placeholders_col, columns) + " WHERE " + parseWithDelimiterEquals(placeholders_pk, primarykeys);
+        String query = "UPDATE " + tableName + " SET " + parseWithDelimiterEquals(placeholders_col, columns, ", ") + " WHERE " + parseWithDelimiterEquals(placeholders_pk, primarykeys, " AND ");
         System.out.println(query);
 
         /* 
          * Execute Query
          */
         try{
-            ResultSet rs = getTableResultSet();
-            ResultSetMetaData rsmd = getColumnRSMDFromTable(rs, tableName);
-            ArrayList<String> types = getColumnTypesFromRSMD(rsmd);
             PreparedStatement pstmt = conn.prepareStatement(query);
 
+            // Fill column values
+            System.out.println(values);
             for (int i = 0; i < values.size(); i++) {
                 String value = values.get(i);
-                String type = types.get(i);
-
+                String type = col_types.get(i);
                 // If varchar<50>
                 if (type.equals("12")) {
                     pstmt.setString(i + 1, value);
@@ -386,9 +440,34 @@ public class DatabaseMenu {
                 }
             }
 
+            // Fill primary key values
+            System.out.println(pk_values);
+            for (int i = 0; i < pk_values.size(); i++) {
+                String value = pk_values.get(i);
+                String type = pk_types.get(i);
+
+                int sql_parameter = values.size() + i + 1;
+                // If varchar<50>
+                if (type.equals("12")) {
+                    pstmt.setString(sql_parameter, value);
+                }
+                // If Integer
+                else if (type.equals("4")) {
+                    pstmt.setInt(sql_parameter, Integer.parseInt(value));
+                }
+                // If DATE
+                else if (type.equals("91")) {
+                    pstmt.setDate(sql_parameter, java.sql.Date.valueOf(value));
+                }
+                else { // Covers 4, which is date
+                    pstmt.setString(sql_parameter, value);
+                }
+            }
+
             int res = pstmt.executeUpdate();
             if (res == 1) {
-                System.out.println("Successfully Updated Values: " + parseWithDelimiter(values));
+                System.out.println("Successfully Updated Values: " + parseWithDelimiterEquals(values, columns, ", "));
+                System.out.println("Completed Where: " + parseWithDelimiterEquals(pk_values, primarykeys, ", "));
             }
             else {
                 System.out.println("Update failed.");
@@ -414,7 +493,7 @@ public class DatabaseMenu {
             placeholders.add("?");
         }
 
-        String query = "DELETE FROM " + tableName + " WHERE " + parseWithDelimiterEquals(placeholders, primarykey);
+        String query = "DELETE FROM " + tableName + " WHERE " + parseWithDelimiterEquals(placeholders, primarykey, " AND ");
         System.out.println(query);
         
         /*
@@ -449,7 +528,7 @@ public class DatabaseMenu {
 
             int res = pstmt.executeUpdate();
             if (res == 1) {
-                System.out.println("Successfully Deleted Tuple: " + parseWithDelimiter(values));
+                System.out.println("Successfully Deleted Tuple: " + parseWithDelimiter(values, ", "));
             }
             else {
                 System.out.println("Deletion failed.");
@@ -469,7 +548,7 @@ public class DatabaseMenu {
         /*
          * Create Query
          */
-        String query = "select " + parseWithDelimiter(columns) + " from " + tableName;
+        String query = "select " + parseWithDelimiter(columns, ", ") + " from " + tableName;
         
         /*
          * Access database
@@ -561,26 +640,26 @@ public class DatabaseMenu {
     /*
      * parseWithDelimiterEquals - parses the values and columns to suffice a WHERE statement
      */
-    public static String parseWithDelimiterEquals(ArrayList<String> values, ArrayList<String> columns) {
+    public static String parseWithDelimiterEquals(ArrayList<String> values, ArrayList<String> columns, String delimiter) {
         ArrayList<String> output = new ArrayList<String>();
 
         for (int i = 0; i < columns.size(); i++) {
             output.add(columns.get(i) + "=" + values.get(i));
         }
 
-        return parseWithDelimiter(output);
+        return parseWithDelimiter(output, delimiter);
     }
 
     /*
-     * Returns a String of the values of an ArrayList with a ", " delimeter 
+     * Returns a String of the values of an ArrayList with a delimeter 
      */
-    public static String parseWithDelimiter(ArrayList<String> array){
+    public static String parseWithDelimiter(ArrayList<String> array, String delimiter){
         String output = "";
         for (int i = 0; i < array.size(); i++) {
             output += array.get(i);
 
             if (i != array.size() - 1) {
-                output +=  ", ";
+                output +=  delimiter;
             }
         }
         return output;
