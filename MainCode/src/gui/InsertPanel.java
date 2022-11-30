@@ -28,18 +28,10 @@ public class InsertPanel {
         form.add(activePanel);
 
         // Changing active panel when combo box is changed
-        comboBox.addActionListener (e -> {
-            JPanel newActivePanel = getActivePanel((Relation) comboBox.getSelectedItem());
+        comboBox.addActionListener (e ->  setActivePanel());
 
-            form.removeAll();
-            form.revalidate(); // refreshes the panel
-            form.add(newActivePanel);
-
-            activePanel = newActivePanel;
-        });
-
+        // Insert button
         JButton insertButton = new JButton("Insert");
-
         insertButton.addActionListener(e -> insertData());
 
         // Add all remaining components
@@ -61,6 +53,13 @@ public class InsertPanel {
     }
 
     /**
+     * @return the main JPanel
+     */
+    public JPanel panel() {
+        return mainPanel;
+    }
+
+    /**
      * Return a new JPanel based on the given key
      *
      * @param key a Relation name
@@ -70,11 +69,14 @@ public class InsertPanel {
         return formMap.get(key).panel();
     }
 
-    /**
-     * @return the main JPanel
-     */
-    public JPanel panel() {
-        return mainPanel;
+    private void setActivePanel() {
+        JPanel newActivePanel = getActivePanel((Relation) comboBox.getSelectedItem());
+
+        form.removeAll();
+        form.revalidate(); // refreshes the panel
+        form.add(newActivePanel);
+
+        activePanel = newActivePanel;
     }
 
     /**
