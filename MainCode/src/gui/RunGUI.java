@@ -1,3 +1,5 @@
+package gui;
+
 import javax.swing.*;
 
 public class RunGUI {
@@ -12,7 +14,7 @@ public class RunGUI {
         JTabbedPane tabbedPane = new JTabbedPane();
 
         JPanel getStarted = new JPanel();
-        JPanel insertPanel = new JPanel();
+        JPanel insertPanel = new InsertPanel().panel();
 
         tabbedPane.addTab("Get Started", getStarted);
         tabbedPane.addTab("Insert", insertPanel);
