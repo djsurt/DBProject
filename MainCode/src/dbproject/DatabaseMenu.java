@@ -1,3 +1,5 @@
+package dbproject;
+
 import java.util.List;
 import java.util.Scanner;
 import java.sql.*;
@@ -8,7 +10,7 @@ public class DatabaseMenu {
     static Connection conn = null;
     static Scanner sc = null;
 
-    private static final String connectionUrl =
+    static final String connectionUrl =
             "jdbc:sqlserver://localhost;"
                     + "database=CSJobsInterface;"
                     + "user=dbuser;"
