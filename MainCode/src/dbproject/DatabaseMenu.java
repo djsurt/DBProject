@@ -90,7 +90,7 @@ public class DatabaseMenu {
         sc.close();
     }
 
-    /*
+    /**
      * Empties all tables and inserts the initial records back into the database
      */
     public static void resetDatabase() {
@@ -399,11 +399,13 @@ public class DatabaseMenu {
         }
     }
 
-    /*
-    * insertData - inserts data into database
-    * ArrayList<String> values - represents each value in the inserted tuple
-    * String tableName - table to insert into
-    */
+    /**
+     * Inserts data into database
+     *
+     * @param values represents each value in the inserted tuple
+     * @param columns
+     * @param tableName table to insert into
+     */
     public static void insertData(ArrayList<String> values, ArrayList<String> columns, String tableName) {
         /*
          * Create Query
@@ -458,11 +460,17 @@ public class DatabaseMenu {
         }
     }
 
-    /*
-    * updateData - updates data from the database
-    * ArrayList<String> values - represents each value in the inserted tuple
-    * String tableName - table to update
-    */
+    /**
+     * Updates data from the database
+     *
+     * @param values represents each value in the inserted tuple
+     * @param columns
+     * @param col_types
+     * @param pk_values
+     * @param primarykeys
+     * @param pk_types
+     * @param tableName table to update
+     */
     public static void updateData(ArrayList<String> values, ArrayList<String> columns, ArrayList<String> col_types, ArrayList<String> pk_values, ArrayList<String> primarykeys, ArrayList<String> pk_types, String tableName) {
         /*
         * Create Query
@@ -546,12 +554,13 @@ public class DatabaseMenu {
         }
     }
 
-    /* 
-    * deleteData - deletes data from the database
-    * ArrayList<String> primarykey - list values representing the primary key to delete
-    * ArrayList<String> columns - represents the 
-    * String tableName - table to delete from
-    */
+    /**
+     * Deletes data from the database
+     *
+     * @param values represents each value in the inserted tuple
+     * @param primarykey list values representing the primary key to delete
+     * @param tableName table to delete from
+     */
     public static void deleteData(ArrayList<String> values, ArrayList<String> primarykey, String tableName) {
         /*
          * Create Query
@@ -607,11 +616,12 @@ public class DatabaseMenu {
         }
     }
 
-    /* 
-    * selectData - selects data from the database
-    * ArrayList<String> columns - list of column names to select
-    * String tableName - table to select from
-    */
+    /**
+     * Selects data from the database
+     *
+     * @param columns list of column names to select
+     * @param tableName table to select from
+     */
     public static void selectData(ArrayList<String> columns, String tableName) {
         /*
          * Create Query
@@ -675,90 +685,11 @@ public class DatabaseMenu {
         System.out.println(formatAsTable(output));
     }
 
-    /*
-     * Get all the companies from a specific location (e.g. New York, NY)
-     */
-    public static void selectCompaniesWithLocation() {
-        
-        /*
-         * Create Query
-         */
-        String query = "EXEC SelectCompaniesWithLocation @Country=?, @City=?, @State=?";
-
-        sc.nextLine();
-        System.out.println("Please enter a value for Country of type Varchar...");
-        String country = sc.nextLine();
-        System.out.println("Please enter a value for State of type Varchar...");
-        String state = sc.nextLine();
-        System.out.println("Please enter a value for City of type Varchar...");
-        String city = sc.nextLine();
-
-        /*
-         * Execute Query
-         */
-        ResultSet rs = null;
-        ResultSetMetaData rsmd = null;
-        int colCount = 0;
-        try{
-            // Access Database
-            PreparedStatement pstmt = conn.prepareStatement(query);
-            pstmt.setString(1, country);
-            pstmt.setString(2, city);
-            pstmt.setString(3, state);
-    
-            // Query Call
-            rs = pstmt.executeQuery();
-            rsmd = rs.getMetaData();
-            colCount = rsmd.getColumnCount();
-        
-        }
-        catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        /*
-        * Print query result
-        */
-        System.out.println("----------------------------------");
-        System.out.println("FUNCTION: Select Companies With Location");
-        System.out.println("RESULT: ");
-
-        ArrayList<ArrayList<String>> output = new ArrayList<>();
-        ArrayList<String> headers = new ArrayList<>();
-
-        // Add header information to ouput
-        try {
-            for (int i = 1; i <= colCount; i++) {
-                headers.add(rsmd.getColumnName(i));
-            }
-        }
-        catch (SQLException e) {
-            e.printStackTrace();     
-        }
-        output.add(headers);
-
-        // Add data to output
-        try {
-            while (rs.next()) {
-                // Add current row of data to output
-                ArrayList<String> row = new ArrayList<>();
-
-                for (int i = 1; i <= colCount; i++) {
-                    row.add(rs.getString(i));
-                }
-                output.add(row);
-            }   
-        }
-        catch (SQLException e) {
-            e.printStackTrace();    
-        }
-
-        // Print output
-        System.out.println(formatAsTable(output));
-    }
-
-    /*
+    /**
      * Maps an ArrayList of String representing SQL Type codes to the String values of the type
+     *
+     * @param types
+     * @return
      */
     public static ArrayList<String> mapSQLTypeArrayToString(ArrayList<String> types) {
         ArrayList<String> output = new ArrayList<>();
@@ -769,8 +700,11 @@ public class DatabaseMenu {
         return output;
     }
 
-    /*
-     * Maps an String SQL Type Code representing SQL Type to the String name of the type
+    /**
+     * Maps a String SQL Type Code representing SQL Type to the String name of the type
+     *
+     * @param sqlType
+     * @return
      */
     public static String mapSQLTypeToString(String sqlType) {
         if (sqlType.equals("12") || sqlType.equals("1003")) {
@@ -787,8 +721,13 @@ public class DatabaseMenu {
         }
     }
 
-    /*
-     * parseWithDelimiterEquals - parses the values and columns to suffice a WHERE statement
+    /**
+     * Parses the values and columns to suffice a WHERE statement
+     *
+     * @param values
+     * @param columns
+     * @param delimiter
+     * @return
      */
     public static String parseWithDelimiterEquals(ArrayList<String> values, ArrayList<String> columns, String delimiter) {
         ArrayList<String> output = new ArrayList<String>();
@@ -800,8 +739,10 @@ public class DatabaseMenu {
         return parseWithDelimiter(output, delimiter);
     }
 
-    /*
-     * Returns a String of the values of an ArrayList with a delimeter 
+    /**
+     * @param array
+     * @param delimiter
+     * @return a String of the values of an ArrayList with a delimiter
      */
     public static String parseWithDelimiter(ArrayList<String> array, String delimiter){
         String output = "";
@@ -815,8 +756,8 @@ public class DatabaseMenu {
         return output;
     }
 
-    /*
-     * Returns the ResultSet with all table names
+    /**
+     * @return the ResultSet with all table names
      */
     public static ResultSet getTableResultSet() {
         ResultSet rs = null;
@@ -831,8 +772,10 @@ public class DatabaseMenu {
         return rs;
     }
 
-    /*
-     * Returns the ResultSet of the primary key
+    /**
+     *
+     * @param tableName
+     * @return the ResultSet of the primary key
      */
     public static ResultSet getPrimaryKeyResultSet(String tableName) {
         ResultSet rs = null;
@@ -847,8 +790,10 @@ public class DatabaseMenu {
         return rs;
     }
 
-    /*
-     * Returns the ResultSetMetaData from a specific table in the ResultSet rs
+    /**
+     * @param rs
+     * @param tableName
+     * @return Returns the ResultSetMetaData from a specific table in the ResultSet rs
      */
     public static ResultSetMetaData getColumnRSMDFromTable(ResultSet rs, String tableName) {
         ResultSetMetaData rsmd = null;
@@ -864,8 +809,10 @@ public class DatabaseMenu {
         return rsmd;
     }
 
-    /*
-     * Returns an ArrayList<String> of tables in the ResultSet for Menu
+    /**
+     *
+     * @param rs result set
+     * @return an ArrayList<String> of tables in the ResultSet for Menu
      */
     public static ArrayList<String> getTablesFromRS(ResultSet rs) {
         ArrayList<String> options = new ArrayList<>();
@@ -921,10 +868,8 @@ public class DatabaseMenu {
     }
 
     /**
-     * Returns an ArrayList<String> of columns in the ResultSetMetaData
-     *
-     * @param rsmd
-     * @return
+     * @param rsmd ResultSetMetaData
+     * @return an ArrayList<String> of columns in the ResultSetMetaData
      */
     public static ArrayList<String> getColumnsFromRSMD(ResultSetMetaData rsmd) {
         ArrayList<String> columns = new ArrayList<String>();
