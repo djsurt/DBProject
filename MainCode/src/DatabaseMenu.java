@@ -1,7 +1,6 @@
-package dbproject;
-
 import java.util.List;
 import java.util.Scanner;
+import java.lang.Thread.State;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -10,7 +9,7 @@ public class DatabaseMenu {
     static Connection conn = null;
     static Scanner sc = null;
 
-    static final String connectionUrl =
+    private static final String connectionUrl =
             "jdbc:sqlserver://localhost;"
                     + "database=CSJobsInterface;"
                     + "user=dbuser;"
@@ -19,7 +18,7 @@ public class DatabaseMenu {
                     + "trustServerCertificate=true;"
                     + "loginTimeout=30;";
 
-    /**
+    /***
      * Establish a connection to a database
      * @param connectionUrl url to connect to the database
      */
@@ -38,8 +37,8 @@ public class DatabaseMenu {
 
     public static void main (String args[]) {
         connectToDatabase(connectionUrl);
-
-        /*
+        
+        /**
          *  Loop Menu of Database Options
          */
         sc = new Scanner(System.in);
@@ -54,7 +53,7 @@ public class DatabaseMenu {
             // Print menu options
             printMenu("Database Menu", menuOptions);
 
-            /*
+            /**
              * Receive text input from user
              */
             input = sc.nextInt();
@@ -89,7 +88,7 @@ public class DatabaseMenu {
         sc.close();
     }
 
-    /*
+    /**
      * Empties all tables and inserts the initial records back into the database
      */
     public static void resetDatabase() {
@@ -106,18 +105,18 @@ public class DatabaseMenu {
     }
 
     public static void insertDataInterface() {
-        /*
+        /**
         * Access database and launch menu of table options, receiving user input
         */
         ResultSet rs = getTableResultSet();
         ArrayList<String> options = getTablesFromRS(rs);
         int input = launchMenu( "Table Menu - Choose a table to INSERT into", options);
 
-        /*
+        /**
         * Let user choose columns to select 
         */
         if (input != options.size()) {
-            /*
+            /**
              * Access database and get columns in selected table
              */
             String tableName = options.get(input - 1);
@@ -151,18 +150,18 @@ public class DatabaseMenu {
     }
 
     public static void updateDataInterface() {
-        /*
+        /**
         * Access database and launch menu of table options, receiving user input
         */
         ResultSet rs = getTableResultSet();
         ArrayList<String> options = getTablesFromRS(rs);
         int input = launchMenu( "Table Menu - Choose a table to UPDATE", options);
 
-        /*
+        /**
         * Let user choose columns to select 
         */
         if (input != options.size()) {
-            /*
+            /**
             * Access database and retrieve columns and types
             */
             String tableName = options.get(input - 1);
@@ -170,7 +169,7 @@ public class DatabaseMenu {
             ArrayList<String> columns = getColumnsFromRSMD(rsmd);
             ArrayList<String> col_types = mapSQLTypeArrayToString(getColumnTypesFromRSMD(rsmd));
 
-            /*
+            /**
              * Access daatabase and retrieve primary keys and types
              */
             rs = getPrimaryKeyResultSet(tableName);
@@ -178,7 +177,7 @@ public class DatabaseMenu {
             rs = getPrimaryKeyResultSet(tableName);
             ArrayList<String> pk_types = mapSQLTypeArrayToString(getPrimaryKeyTypesFromRS(rs));
 
-            /*
+            /**
              * Retrieve user input on which primary key values to update at
              */
             ArrayList<ArrayList<String>> columnInfo = new ArrayList<>();
@@ -207,7 +206,7 @@ public class DatabaseMenu {
                 columns.remove(0);
             }
 
-            /*
+            /**
              * Receive input from user on which columns to update
              */
             // CASE 1: STOP ADDING COLUMNS is not a menu option
@@ -234,7 +233,7 @@ public class DatabaseMenu {
             
             System.out.println("The following columns (" + parseWithDelimiter(output, ", ") + ") will be updated WHERE " + parseWithDelimiterEquals(pk_values, pk, ", "));
 
-            /*
+            /**
             * Receive user input for each column
             */
             ArrayList<String> values = new ArrayList<String>();
@@ -254,18 +253,18 @@ public class DatabaseMenu {
     }
 
     public static void deleteDataInterface() {
-        /*
+        /**
         * Access database and launch menu of table options, receiving user input
         */
         ResultSet rs = getTableResultSet();
         ArrayList<String> options = getTablesFromRS(rs);
         int input = launchMenu( "Table Menu - Choose a table to DELETE from", options);
 
-        /*
+        /**
         * Let user choose columns to select 
         */
         if (input != options.size()) {
-            /*
+            /**
             * Access database and print primary key information
             */
             String tableName = options.get(input - 1);
@@ -281,7 +280,7 @@ public class DatabaseMenu {
             System.out.println("The table " + tableName + " requires the following primary key values:");
             System.out.println(formatAsTable(columnInfo));
 
-            /*
+            /**
              * Receive user input for each primary key
              */
             ArrayList<String> values = new ArrayList<String>();
@@ -302,18 +301,18 @@ public class DatabaseMenu {
     }
 
     public static void selectDataInterface() {
-        /*
+        /**
         * Access database and launch menu of table options, receiving user input
         */
         ResultSet rs = getTableResultSet();
         ArrayList<String> options = getTablesFromRS(rs);
         int input = launchMenu( "Table Menu - Choose a table to SELECT from", options);
 
-        /*
+        /**
         * Let user choose columns to select 
         */
         if (input != options.size()) {
-            /*
+            /**
             * Access database and launch menu of column options, receiving user input
             */
             String tableName = options.get(input - 1);
@@ -346,7 +345,7 @@ public class DatabaseMenu {
             selectData(output, tableName);
         }
     }
-    /*
+    /**
     * specialSelectInterface - runs the special select menu
     */
     public static void specialSelectInterface() {
@@ -355,12 +354,7 @@ public class DatabaseMenu {
             "Select Companies From Prestige", 
             "Select Company From Industry", 
             "Select Company From Employee Range", 
-            "Select Jobs From Cycle", 
-            "Select Job From Years of Experience",
-            "Select Jobs With Paid Time Off",
-            "Select Jobs Applied To",
-            "Select Jobs Posted Within Date Range",
-            "Select Users Following At Least One Job"
+            "Select Data", "Special Select Statements Menu", "QUIT"
         );
 
         // Print menu options
@@ -373,48 +367,39 @@ public class DatabaseMenu {
 
         switch(input) {
             case 1:
-                StoredProcedures.selectCompaniesWithLocation();
+                selectCompaniesWithLocation();
                 break;
             case 2:
-                StoredProcedures.selectCompanyFromPrestige();
+                insertDataInterface();
                 break;
             case 3:
-                StoredProcedures.selectCompanyFromIndustry();
+                updateDataInterface();
                 break;
             case 4:
-                StoredProcedures.selectCompanyFromEmployeeRange();
+                deleteDataInterface();
                 break;
             case 5:
-                StoredProcedures.selectJobsFromCycle();
+                selectDataInterface();
                 break;
             case 6:
-                StoredProcedures.selectJobFromYearsOfExperience();
-                break;
+                specialSelectInterface();
             case 7:
-                StoredProcedures.selectJobsWithPaidTimeOff();
-                break;
-            case 8:
-                StoredProcedures.selectJobsAppliedTo();
-                break;
-            case 9:
-                StoredProcedures.selectJobsPostedWithinDateRange();
-                break;
-            case 10:
-                StoredProcedures.selectUsersFollowingAtLeastOneJob();
-                break;
+                System.out.println("Exiting...");
+                sc.close();
+                System.exit(0);
             default:
                 System.out.println("You did not input a valid option. Please try again.");
                 break;
         }
     }
 
-    /*
+    /***
     * insertData - inserts data into database
     * ArrayList<String> values - represents each value in the inserted tuple
     * String tableName - table to insert into
     */
     public static void insertData(ArrayList<String> values, ArrayList<String> columns, String tableName) {
-        /*
+        /***
          * Create Query
          */
         ArrayList<String> placeholders = new ArrayList<>();
@@ -424,7 +409,7 @@ public class DatabaseMenu {
 
         String query = "INSERT INTO " + tableName + "(" + parseWithDelimiter(columns, ", ") +") values (" + parseWithDelimiter(placeholders, ", ") + ")";
         
-        /*
+        /***
          * Execute Query
          */
         try{
@@ -467,13 +452,13 @@ public class DatabaseMenu {
         }
     }
 
-    /*
+    /***
     * updateData - updates data from the database
     * ArrayList<String> values - represents each value in the inserted tuple
     * String tableName - table to update
     */
     public static void updateData(ArrayList<String> values, ArrayList<String> columns, ArrayList<String> col_types, ArrayList<String> pk_values, ArrayList<String> primarykeys, ArrayList<String> pk_types, String tableName) {
-        /*
+        /***
         * Create Query
         */
         ArrayList<String> placeholders_col = new ArrayList<>();
@@ -489,7 +474,7 @@ public class DatabaseMenu {
         String query = "UPDATE " + tableName + " SET " + parseWithDelimiterEquals(placeholders_col, columns, ", ") + " WHERE " + parseWithDelimiterEquals(placeholders_pk, primarykeys, " AND ");
         System.out.println(query);
 
-        /* 
+        /*** 
          * Execute Query
          */
         try{
@@ -555,14 +540,14 @@ public class DatabaseMenu {
         }
     }
 
-    /* 
+    /** 
     * deleteData - deletes data from the database
     * ArrayList<String> primarykey - list values representing the primary key to delete
     * ArrayList<String> columns - represents the 
     * String tableName - table to delete from
     */
     public static void deleteData(ArrayList<String> values, ArrayList<String> primarykey, String tableName) {
-        /*
+        /**
          * Create Query
          */
         ArrayList<String> placeholders = new ArrayList<>();
@@ -573,7 +558,7 @@ public class DatabaseMenu {
         String query = "DELETE FROM " + tableName + " WHERE " + parseWithDelimiterEquals(placeholders, primarykey, " AND ");
         System.out.println(query);
         
-        /*
+        /**
          * Execute Query
          */
         try{
@@ -616,18 +601,18 @@ public class DatabaseMenu {
         }
     }
 
-    /* 
+    /** 
     * selectData - selects data from the database
     * ArrayList<String> columns - list of column names to select
     * String tableName - table to select from
     */
     public static void selectData(ArrayList<String> columns, String tableName) {
-        /*
+        /**
          * Create Query
          */
         String query = "select " + parseWithDelimiter(columns, ", ") + " from " + tableName;
         
-        /*
+        /**
          * Access database
          */
         ResultSet rs = null;
@@ -643,7 +628,7 @@ public class DatabaseMenu {
             e.printStackTrace();
         }
 
-        /*
+        /**
          * Print query result
          */
         System.out.println("----------------------------------");
@@ -684,12 +669,12 @@ public class DatabaseMenu {
         System.out.println(formatAsTable(output));
     }
 
-    /*
+    /**
      * Get all the companies from a specific location (e.g. New York, NY)
      */
     public static void selectCompaniesWithLocation() {
         
-        /*
+        /**
          * Create Query
          */
         String query = "EXEC SelectCompaniesWithLocation @Country=?, @City=?, @State=?";
@@ -702,7 +687,7 @@ public class DatabaseMenu {
         System.out.println("Please enter a value for City of type Varchar...");
         String city = sc.nextLine();
 
-        /*
+        /**
          * Execute Query
          */
         ResultSet rs = null;
@@ -725,7 +710,7 @@ public class DatabaseMenu {
             e.printStackTrace();
         }
 
-        /*
+        /**
         * Print query result
         */
         System.out.println("----------------------------------");
@@ -766,7 +751,7 @@ public class DatabaseMenu {
         System.out.println(formatAsTable(output));
     }
 
-    /*
+    /**
      * Maps an ArrayList of String representing SQL Type codes to the String values of the type
      */
     public static ArrayList<String> mapSQLTypeArrayToString(ArrayList<String> types) {
@@ -778,7 +763,7 @@ public class DatabaseMenu {
         return output;
     }
 
-    /*
+    /**
      * Maps an String SQL Type Code representing SQL Type to the String name of the type
      */
     public static String mapSQLTypeToString(String sqlType) {
@@ -796,7 +781,7 @@ public class DatabaseMenu {
         }
     }
 
-    /*
+    /**
      * parseWithDelimiterEquals - parses the values and columns to suffice a WHERE statement
      */
     public static String parseWithDelimiterEquals(ArrayList<String> values, ArrayList<String> columns, String delimiter) {
@@ -809,7 +794,7 @@ public class DatabaseMenu {
         return parseWithDelimiter(output, delimiter);
     }
 
-    /*
+    /**
      * Returns a String of the values of an ArrayList with a delimeter 
      */
     public static String parseWithDelimiter(ArrayList<String> array, String delimiter){
@@ -824,7 +809,7 @@ public class DatabaseMenu {
         return output;
     }
 
-    /*
+    /**
      * Returns the ResultSet with all table names
      */
     public static ResultSet getTableResultSet() {
@@ -840,7 +825,7 @@ public class DatabaseMenu {
         return rs;
     }
 
-    /*
+    /**
      * Returns the ResultSet of the primary key
      */
     public static ResultSet getPrimaryKeyResultSet(String tableName) {
@@ -856,7 +841,7 @@ public class DatabaseMenu {
         return rs;
     }
 
-    /*
+    /**
      * Returns the ResultSetMetaData from a specific table in the ResultSet rs
      */
     public static ResultSetMetaData getColumnRSMDFromTable(ResultSet rs, String tableName) {
@@ -873,7 +858,7 @@ public class DatabaseMenu {
         return rsmd;
     }
 
-    /*
+    /**
      * Returns an ArrayList<String> of tables in the ResultSet for Menu
      */
     public static ArrayList<String> getTablesFromRS(ResultSet rs) {
@@ -929,7 +914,7 @@ public class DatabaseMenu {
         return output;
     }
 
-    /**
+    /***
      * Returns an ArrayList<String> of columns in the ResultSetMetaData
      *
      * @param rsmd
@@ -967,7 +952,7 @@ public class DatabaseMenu {
         return types;
     }
 
-    /**
+    /***
      * Prints a menu based off menuName and menu options and collects user input
      *
      * @param menuName Title of menu to be displayed
@@ -977,7 +962,7 @@ public class DatabaseMenu {
     public static int launchMenu(String menuName, List<String> options) {
         printMenu(menuName, options);
 
-        /*
+        /**
          * Receive valid user input
          */
         int input = sc.nextInt();
@@ -989,7 +974,7 @@ public class DatabaseMenu {
         return input;
     }
 
-    /**
+    /***
      * Prints a formatted menu based off the menu options and the menuName
      *
      * @param menuName Title of menu to be displayed
@@ -1021,7 +1006,7 @@ public class DatabaseMenu {
         System.out.println("Select a numeric option and hit Enter...");
     }
 
-    /**
+    /***
      * Formats and prints a nested ArrayList as a table
      *
      * @param rows

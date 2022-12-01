@@ -107,7 +107,7 @@ public class StoredProcedures {
      *
      * Get all the companies with a certain prestige level
      */
-    public void selectCompanyFromPrestige() {
+    public static void selectCompanyFromPrestige() {
 
         String funcName = "SelectCompanyFromPrestige";
 
@@ -149,7 +149,7 @@ public class StoredProcedures {
      *
      * Get all the companies from a specific industry (e.g. Technology)
      */
-    public void selectCompanyFromIndustry() {
+    public static void selectCompanyFromIndustry() {
 
         String funcName = "SelectCompanyFromIndustry";
 
@@ -191,7 +191,7 @@ public class StoredProcedures {
      *
      * Get all the companies with a number of employees between a given range
      */
-    public void selectCompanyFromEmployeeRange() {
+    public static void selectCompanyFromEmployeeRange() {
 
         String funcName = "SelectCompanyFromEmployeeRange";
 
@@ -237,7 +237,7 @@ public class StoredProcedures {
      *
      * Get all jobs from a specific cycle (e.g. Summer)
      */
-    public void selectJobsFromCycle() {
+    public static void selectJobsFromCycle() {
 
         String funcName = "SelectJobsFromCycle";
 
@@ -279,7 +279,7 @@ public class StoredProcedures {
      *
      * Get all jobs from with a total compensation between a given range
      */
-    public void selectJobFromCompensationRange() {
+    public static void selectJobFromCompensationRange() {
 
         String funcName = "SelectJobFromCompensationRange";
 
@@ -324,7 +324,7 @@ public class StoredProcedures {
      *
      * Get all the jobs with a specified minimum years of experience
      */
-    public void selectJobFromYearsOfExperience() {
+    public static void selectJobFromYearsOfExperience() {
 
         String funcName = "SelectJobFromYearsOfExperience";
 
@@ -365,7 +365,7 @@ public class StoredProcedures {
      *
      * Get all the jobs with some paid time off
      */
-    public void selectJobsWithPaidTimeOff() {
+    public static void selectJobsWithPaidTimeOff() {
 
         String funcName = "SelectJobsWithPaidTimeOff";
 
@@ -399,7 +399,7 @@ public class StoredProcedures {
      *
      * Get all the jobs from JobsFollowed that have been applied to
      */
-    public void selectJobsAppliedTo() {
+    public static void selectJobsAppliedTo() {
 
         String funcName = "SelectJobsAppliedTo";
 
@@ -435,7 +435,7 @@ public class StoredProcedures {
      *
      * Get all jobs that were posted within a specific date range
      */
-    public void selectJobsPostedWithinDateRange() {
+    public static void selectJobsPostedWithinDateRange() {
 
         String funcName = "selectJobsPostedWithinDateRange";
 
@@ -480,7 +480,7 @@ public class StoredProcedures {
      *
      * Get all jobs that were posted within a specific date range
      */
-    public void selectUsersFollowingAtLeastOneJob() {
+    public static void selectUsersFollowingAtLeastOneJob() {
 
         String funcName = "SelectUsersFollowingAtLeastOneJob";
 
