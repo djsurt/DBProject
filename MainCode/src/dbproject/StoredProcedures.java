@@ -9,6 +9,7 @@ public class StoredProcedures {
     static Scanner sc = DatabaseMenu.sc;
     static Connection conn = DatabaseMenu.conn;
 
+
     /**
      * Helper method to print the query result after calling a stored procedure
      *
@@ -59,39 +60,33 @@ public class StoredProcedures {
     /**
      * Stored Procedure 1
      *
-     * Get all the companies from a specific location
+     * Use case: Get the number of users who have applied to given company
      */
-    public static void selectCompaniesWithLocation() {
+    public static void GetNumUsersAppliedToCompany() {
 
-        String funcName = "SelectCompaniesWithLocation";
+        String funcName = "GetNumUsersAppliedToCompany";
+        String query = "EXEC " +funcName+ " @Company=?"; // @Company refers to Company.name
 
-        // Create the query
-        String query = "EXEC " +funcName+ " @Country=?, @City=?, @State=?";
-
+        // Get user input
         sc.nextLine();
-        System.out.println("Please enter a value for Country of type Varchar...");
-        String country = sc.nextLine();
-        System.out.println("Please enter a value for State of type Varchar...");
-        String state = sc.nextLine();
-        System.out.println("Please enter a value for City of type Varchar...");
-        String city = sc.nextLine();
+
+        System.out.println("Enter a company (e.g. Google): ");
+        String company = sc.nextLine();
 
         // Execute the query
-        ResultSet rs = null;
-        ResultSetMetaData rsmd = null;
+        ResultSet resultSet = null;
+        ResultSetMetaData resultSetMetaData = null;
         int colCount = 0;
 
         try{
             // Access Database
             PreparedStatement pstmt = conn.prepareStatement(query);
-            pstmt.setString(1, country);
-            pstmt.setString(2, city);
-            pstmt.setString(3, state);
+            pstmt.setString(1, company);
 
             // Query Call
-            rs = pstmt.executeQuery();
-            rsmd = rs.getMetaData();
-            colCount = rsmd.getColumnCount();
+            resultSet = pstmt.executeQuery();
+            resultSetMetaData = resultSet.getMetaData();
+            colCount = resultSetMetaData.getColumnCount();
 
         }
         catch (SQLException e) {
@@ -99,6 +94,132 @@ public class StoredProcedures {
         }
 
         // Print the results
-        printQueryResult(funcName, colCount, rs, rsmd);
+        printQueryResult(funcName, colCount, resultSet, resultSetMetaData);
+    }
+
+    /**
+     * Stored Procedure 2
+     *
+     * Use case: Select all jobs from a specific company
+     */
+    public static void SelectJobsFromCompany() {
+
+        String funcName = "SelectJobsFromCompany";
+        String query = "EXEC " +funcName+ " @Company=?"; // @Company refers to Company.name
+
+        // Get user input
+        sc.nextLine();
+
+        System.out.println("Enter a company (e.g. Google): ");
+        String company = sc.nextLine();
+
+        // Execute the query
+        ResultSet resultSet = null;
+        ResultSetMetaData resultSetMetaData = null;
+        int colCount = 0;
+
+        try{
+            // Access Database
+            PreparedStatement pstmt = conn.prepareStatement(query);
+            pstmt.setString(1, company);
+
+            // Query Call
+            resultSet = pstmt.executeQuery();
+            resultSetMetaData = resultSet.getMetaData();
+            colCount = resultSetMetaData.getColumnCount();
+
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        // Print the results
+        printQueryResult(funcName, colCount, resultSet, resultSetMetaData);
+    }
+
+    /**
+     * Stored Procedure 3
+     *
+     * Use case: Select all jobs from a specific industry
+     */
+    public static void SelectJobsFromIndustry() {
+
+        String funcName = "SelectJobsFromIndustry";
+        String query = "EXEC " +funcName+ " @Industry=?"; // @Industry refers to Company.industry
+
+        // Get user input
+        sc.nextLine();
+
+        System.out.println("Enter an industry (e.g. Defense): ");
+        String industry = sc.nextLine();
+
+        // Execute the query
+        ResultSet resultSet = null;
+        ResultSetMetaData resultSetMetaData = null;
+        int colCount = 0;
+
+        try{
+            // Access Database
+            PreparedStatement pstmt = conn.prepareStatement(query);
+            pstmt.setString(1, industry);
+
+            // Query Call
+            resultSet = pstmt.executeQuery();
+            resultSetMetaData = resultSet.getMetaData();
+            colCount = resultSetMetaData.getColumnCount();
+
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        // Print the results
+        printQueryResult(funcName, colCount, resultSet, resultSetMetaData);
+    }
+
+    /**
+     * Stored Procedure 4
+     *
+     * Use case: Get all jobs, with company name and benefits, during a specific cycle, at a specific state, and for a specific role
+     */
+    public static void SelectJobInfoWithParameters() {
+
+        String funcName = "SelectJobInfoWithParameters";
+        String query = "EXEC " +funcName+ " @Cycle=?, @State=?, @Role=?"; // @Industry refers to Company.industry
+
+        // Get user input
+        sc.nextLine();
+
+        System.out.println("Enter a cycle (e.g. Summer): ");
+        String cycle = sc.nextLine();
+        System.out.println("Enter a state (e.g. Ohio): ");
+        String state = sc.nextLine();
+        System.out.println("Enter a role (e.g. Software Engineering): ");
+        String role = sc.nextLine();
+
+        // Execute the query
+        ResultSet resultSet = null;
+        ResultSetMetaData resultSetMetaData = null;
+        int colCount = 0;
+
+        try{
+            // Access Database
+            PreparedStatement pstmt = conn.prepareStatement(query);
+            pstmt.setString(1, cycle);
+            pstmt.setString(2, state);
+            pstmt.setString(3, role);
+
+            // Query Call
+            resultSet = pstmt.executeQuery();
+            resultSetMetaData = resultSet.getMetaData();
+            colCount = resultSetMetaData.getColumnCount();
+
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        // Print the results
+        printQueryResult(funcName, colCount, resultSet, resultSetMetaData);
     }
 }
