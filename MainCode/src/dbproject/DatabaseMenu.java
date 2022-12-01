@@ -355,7 +355,12 @@ public class DatabaseMenu {
             "Select Companies From Prestige", 
             "Select Company From Industry", 
             "Select Company From Employee Range", 
-            "Select Data", "Special Select Statements Menu", "QUIT"
+            "Select Jobs From Cycle", 
+            "Select Job From Years of Experience",
+            "Select Jobs With Paid Time Off",
+            "Select Jobs Applied To",
+            "Select Jobs Posted Within Date Range",
+            "Select Users Following At Least One Job"
         );
 
         // Print menu options
@@ -366,32 +371,41 @@ public class DatabaseMenu {
          */
         int input = sc.nextInt();
 
-        switch(input) {
-            case 1:
-                StoredProcedures.selectCompaniesWithLocation();
-                break;
-            case 2:
-                insertDataInterface();
-                break;
-            case 3:
-                updateDataInterface();
-                break;
-            case 4:
-                deleteDataInterface();
-                break;
-            case 5:
-                selectDataInterface();
-                break;
-            case 6:
-                specialSelectInterface();
-            case 7:
-                System.out.println("Exiting...");
-                sc.close();
-                System.exit(0);
-            default:
-                System.out.println("You did not input a valid option. Please try again.");
-                break;
-        }
+//        switch(input) {
+//            case 1:
+//                StoredProcedures.selectCompaniesWithLocation();
+//                break;
+//            case 2:
+//                StoredProcedures.selectCompanyFromPrestige();
+//                break;
+//            case 3:
+//                StoredProcedures.selectCompanyFromIndustry();
+//                break;
+//            case 4:
+//                StoredProcedures.selectCompanyFromEmployeeRange();
+//                break;
+//            case 5:
+//                StoredProcedures.selectJobsFromCycle();
+//                break;
+//            case 6:
+//                StoredProcedures.selectJobFromYearsOfExperience();
+//                break;
+//            case 7:
+//                StoredProcedures.selectJobsWithPaidTimeOff();
+//                break;
+//            case 8:
+//                StoredProcedures.selectJobsAppliedTo();
+//                break;
+//            case 9:
+//                StoredProcedures.selectJobsPostedWithinDateRange();
+//                break;
+//            case 10:
+//                StoredProcedures.selectUsersFollowingAtLeastOneJob();
+//                break;
+//            default:
+//                System.out.println("You did not input a valid option. Please try again.");
+//                break;
+//        }
     }
 
     /*
