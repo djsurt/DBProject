@@ -242,7 +242,7 @@ public class StoredProcedures {
         String funcName = "SelectJobsFromCycle";
 
         // Create query
-        String query = "EXEC " +funcName+ " @Cycle=?";
+        String query = "EXEC " +funcName+ " @CycleName=?";
 
         sc.nextLine();
 
