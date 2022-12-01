@@ -2,7 +2,6 @@ package dbproject;
 
 import java.util.List;
 import java.util.Scanner;
-import java.lang.Thread.State;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -39,7 +38,7 @@ public class DatabaseMenu {
 
     public static void main (String args[]) {
         connectToDatabase(connectionUrl);
-        
+
         /*
          *  Loop Menu of Database Options
          */
@@ -351,7 +350,48 @@ public class DatabaseMenu {
     * specialSelectInterface - runs the special select menu
     */
     public static void specialSelectInterface() {
-        selectCompaniesWithLocation();
+        List<String> menuOptions = List.of(
+            "Select Companies With Location", 
+            "Select Companies From Prestige", 
+            "Select Company From Industry", 
+            "Select Company From Employee Range", 
+            "Select Data", "Special Select Statements Menu", "QUIT"
+        );
+
+        // Print menu options
+        printMenu("Database Menu", menuOptions);
+
+        /*
+         * Receive text input from user
+         */
+        int input = sc.nextInt();
+
+        switch(input) {
+            case 1:
+                StoredProcedures.selectCompaniesWithLocation();
+                break;
+            case 2:
+                insertDataInterface();
+                break;
+            case 3:
+                updateDataInterface();
+                break;
+            case 4:
+                deleteDataInterface();
+                break;
+            case 5:
+                selectDataInterface();
+                break;
+            case 6:
+                specialSelectInterface();
+            case 7:
+                System.out.println("Exiting...");
+                sc.close();
+                System.exit(0);
+            default:
+                System.out.println("You did not input a valid option. Please try again.");
+                break;
+        }
     }
 
     /*
