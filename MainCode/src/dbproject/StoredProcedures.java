@@ -10,6 +10,7 @@ public class StoredProcedures {
     static Connection conn = DatabaseMenu.conn;
 
 
+
     /**
      * Helper method to print the query result after calling a stored procedure
      *
@@ -185,7 +186,7 @@ public class StoredProcedures {
     public static void SelectJobInfoWithParameters() {
 
         String funcName = "SelectJobInfoWithParameters";
-        String query = "EXEC " +funcName+ " @Cycle=?, @State=?, @Role=?"; // @Industry refers to Company.industry
+        String query = "EXEC " +funcName+ " @Cycle=?, @State=?, @Role=?";
 
         // Get user input
         sc.nextLine();
@@ -208,6 +209,49 @@ public class StoredProcedures {
             pstmt.setString(1, cycle);
             pstmt.setString(2, state);
             pstmt.setString(3, role);
+
+            // Query Call
+            resultSet = pstmt.executeQuery();
+            resultSetMetaData = resultSet.getMetaData();
+            colCount = resultSetMetaData.getColumnCount();
+
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        // Print the results
+        printQueryResult(funcName, colCount, resultSet, resultSetMetaData);
+    }
+
+    /**
+     * Stored Procedure 5
+     *
+     * Use case: Get mean, min, and max insurance and paid time off benefits by city for a specific state
+     */
+    public static void GetBenefitInfoByCityFromState() {
+
+        String funcName = "GetBenefitInfoByCityFromState";
+        String query = "EXEC " +funcName+ " @Country=?, @State=?";
+
+        // Get user input
+        sc.nextLine();
+
+        System.out.println("Enter a country (e.g. USA): ");
+        String country = sc.nextLine();
+        System.out.println("Enter a state (e.g. Ohio): ");
+        String state = sc.nextLine();
+
+        // Execute the query
+        ResultSet resultSet = null;
+        ResultSetMetaData resultSetMetaData = null;
+        int colCount = 0;
+
+        try{
+            // Access Database
+            PreparedStatement pstmt = conn.prepareStatement(query);
+            pstmt.setString(1, country);
+            pstmt.setString(2, state);
 
             // Query Call
             resultSet = pstmt.executeQuery();

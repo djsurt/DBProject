@@ -347,66 +347,56 @@ public class DatabaseMenu {
             selectData(output, tableName);
         }
     }
-    /*
-    * specialSelectInterface - runs the special select menu
+
+    // Stored procedures the user can select from
+    private static final List<String> storedProcMenuOptions = List.of(
+            "Get Number of Users Who Applied to a Company",
+            "Select Jobs From Company",
+            "Select Jobs From Industry",
+            "Select Jobs from Cycle, State, and Role",
+            "Get Benefit Info By City From State"
+    );
+
+    /**
+    * SpecialSelectInterface - runs the special select menu
     */
     public static void specialSelectInterface() {
         List<String> menuOptions = List.of(
-            "Select Companies With Location", 
-            "Select Companies From Prestige", 
-            "Select Company From Industry", 
-            "Select Company From Employee Range", 
-            "Select Jobs From Cycle", 
-            "Select Job From Years of Experience",
-            "Select Jobs With Paid Time Off",
-            "Select Jobs Applied To",
-            "Select Jobs Posted Within Date Range",
-            "Select Users Following At Least One Job"
+            "Get Number of Users Who Applied to a Company",
+            "Select Jobs From Company",
+            "Select Jobs From Industry",
+            "Select Jobs from Cycle, State, and Role",
+            "Get Benefit Info By City From State"
         );
 
         // Print menu options
-        printMenu("Database Menu", menuOptions);
+        printMenu("Database Menu", storedProcMenuOptions);
 
         /*
          * Receive text input from user
          */
         int input = sc.nextInt();
 
-//        switch(input) {
-//            case 1:
-//                StoredProcedures.selectCompaniesWithLocation();
-//                break;
-//            case 2:
-//                StoredProcedures.selectCompanyFromPrestige();
-//                break;
-//            case 3:
-//                StoredProcedures.selectCompanyFromIndustry();
-//                break;
-//            case 4:
-//                StoredProcedures.selectCompanyFromEmployeeRange();
-//                break;
-//            case 5:
-//                StoredProcedures.selectJobsFromCycle();
-//                break;
-//            case 6:
-//                StoredProcedures.selectJobFromYearsOfExperience();
-//                break;
-//            case 7:
-//                StoredProcedures.selectJobsWithPaidTimeOff();
-//                break;
-//            case 8:
-//                StoredProcedures.selectJobsAppliedTo();
-//                break;
-//            case 9:
-//                StoredProcedures.selectJobsPostedWithinDateRange();
-//                break;
-//            case 10:
-//                StoredProcedures.selectUsersFollowingAtLeastOneJob();
-//                break;
-//            default:
-//                System.out.println("You did not input a valid option. Please try again.");
-//                break;
-//        }
+        switch(input) {
+            case 1:
+                StoredProcedures.GetNumUsersAppliedToCompany();
+                break;
+            case 2:
+                StoredProcedures.SelectJobsFromCompany();
+                break;
+            case 3:
+                StoredProcedures.SelectJobsFromIndustry();
+                break;
+            case 4:
+                StoredProcedures.SelectJobInfoWithParameters();
+                break;
+            case 5:
+                StoredProcedures.GetBenefitInfoByCityFromState();
+                break;
+            default:
+                System.out.println("You did not input a valid option. Please try again.");
+                break;
+        }
     }
 
     /*
