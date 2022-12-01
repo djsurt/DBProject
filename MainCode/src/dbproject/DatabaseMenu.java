@@ -77,6 +77,7 @@ public class DatabaseMenu {
                     break;
                 case 6:
                     specialSelectInterface();
+                    break;
                 case 7:
                     System.out.println("Exiting...");
                     sc.close();
