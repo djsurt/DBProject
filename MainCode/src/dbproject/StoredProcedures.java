@@ -395,17 +395,18 @@ public class StoredProcedures {
      */
     public static void SelectJobsFromCompanyPostedWithinDateRange() {
 
-        //TODO: add a 1 to the end of funcName if Dhananjay can't fix it in SSMS
         String funcName = "SelectJobsFromCompanyPostedWithinDateRange";
-        String query = "EXEC " +funcName+ " @Lowerbound=?, @Upperbound=?";
+        String query = "EXEC " +funcName+ " @Company=?, @Lowerbound=?, @Upperbound=?";
 
         // Get user input
         sc.nextLine();
 
-        System.out.println("Enter a lower bound for the date (e.g. 2022-03-01): ");
-        int lowerbound = Integer.parseInt(sc.nextLine());
-        System.out.println("Enter an upper bound (e.g. 2022-10-17): ");
-        int upperbound = Integer.parseInt(sc.nextLine());
+        System.out.println("Enter a company (e.g. Google): ");
+        String company = sc.nextLine();
+        System.out.println("Enter a lower bound for the date (e.g. 2022-01-01): ");
+        String lowerbound = sc.nextLine();
+        System.out.println("Enter an upper bound (e.g. 2022-02-01): ");
+        String upperbound = sc.nextLine();
 
         // Execute the query
         ResultSet resultSet = null;
@@ -415,8 +416,9 @@ public class StoredProcedures {
         try{
             // Access Database
             PreparedStatement pstmt = conn.prepareStatement(query);
-            pstmt.setInt(1, lowerbound);
-            pstmt.setInt(2, upperbound);
+            pstmt.setString(1, company);
+            pstmt.setString(2, lowerbound);
+            pstmt.setString(3, upperbound);
 
             // Query Call
             resultSet = pstmt.executeQuery();
@@ -437,9 +439,9 @@ public class StoredProcedures {
      *
      * Use case: Get all users who applied to jobs within a specific cycle
      */
-    public static void SelectUsersAppliedForCycle() {
+    public static void SelectUsersWhoAppliedForCycle() {
 
-        String funcName = "SelectUsersAppliedForCycle1";
+        String funcName = "SelectUsersWhoAppliedForCycle";
         String query = "EXEC " +funcName+ " @Cycle=?";
 
         // Get user input

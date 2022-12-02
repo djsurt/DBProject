@@ -404,7 +404,7 @@ public class DatabaseMenu {
                 StoredProcedures.SelectJobsFromCompanyPostedWithinDateRange();
                 break;
             case 10:
-                StoredProcedures.SelectUsersAppliedForCycle();
+                StoredProcedures.SelectUsersWhoAppliedForCycle();
                 break;
             default:
                 System.out.println("You did not input a valid option. Please try again.");
