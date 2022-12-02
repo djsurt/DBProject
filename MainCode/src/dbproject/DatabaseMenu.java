@@ -10,7 +10,7 @@ public class DatabaseMenu {
     static Connection conn = null;
     static Scanner sc = null;
 
-    static final String connectionUrl =
+    public static final String connectionUrl =
             "jdbc:sqlserver://localhost;"
                     + "database=CSJobsInterface;"
                     + "user=dbuser;"
@@ -23,7 +23,7 @@ public class DatabaseMenu {
      * Establish a connection to a database
      * @param connectionUrl url to connect to the database
      */
-    private static void connectToDatabase(String connectionUrl) {
+    public static void connectToDatabase(String connectionUrl) {
         try {
             System.out.println("Connecting to database...");
             conn = DriverManager.getConnection(connectionUrl);

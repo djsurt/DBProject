@@ -1,15 +1,18 @@
 package dbproject.gui;
 
+import dbproject.DatabaseMenu;
 import javax.swing.*;
 import java.sql.*;
 
 public class RunGUI {
 
-    //TODO: public final static DatabaseMenu = new DatabaseMenu();
-
     public final static boolean DEBUG = false;
 
     public static void main(String[] args) {
+        // Connect to the database
+        DatabaseMenu.connectToDatabase(DatabaseMenu.connectionUrl);
+
+        // Set up the GUI
         JFrame frame = new JFrame("Computer Science Jobs Database");
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
