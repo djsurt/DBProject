@@ -12,25 +12,28 @@ public class InsertForm {
     private GridLayout grid;
     private Map<JLabel, JTextField> textFieldMap = new LinkedHashMap<>();
 
-    public InsertForm(ArrayList<String> fields) {
+    public InsertForm(ArrayList<String> fields, ArrayList<String> types) {
 
-        grid = new GridLayout(fields.size(), 2);
+        grid = new GridLayout(fields.size(), 3);
         grid.setVgap(5);
         grid.setHgap(10);
 
         panel.setLayout(grid);
-        panel.setPreferredSize(new Dimension(500, fields.size() * 30));
+        panel.setPreferredSize(new Dimension(700, fields.size() * 30));
 
         for(int i = 0; i < fields.size(); i++) {
-            String labelText = fields.get(i);
+            String attributeText = fields.get(i);
+            String typeText = "(type: " +types.get(i)+ ")";
 
-            JLabel label = new JLabel(labelText);
+            JLabel attributeLabel = new JLabel(attributeText);
             JTextField textField = new JTextField();
+            JLabel typeLabel = new JLabel(typeText); // e.g. varchar
 
-            panel.add(label);
+            panel.add(attributeLabel);
             panel.add(textField);
+            panel.add(typeLabel);
 
-            textFieldMap.put(label, textField);
+            textFieldMap.put(attributeLabel, textField);
         }
     }
 

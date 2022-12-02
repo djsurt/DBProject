@@ -12,18 +12,12 @@ import java.util.stream.Collectors;
 
 public class InsertPanel {
 
-    // private final EnumMap<Relation, InsertForm> formMap = new EnumMap<>(Map.of(
-    //         Relation.COMPANY, new InsertForm("company_id", "name", "hq_location", "tier", "industry", "num_employees"),
-    //         Relation.JOBS, new InsertForm("job_id", "company_id", "type", "role", "description", "benefit_id", "required_yoe", "location_id", "cycle", "date_opened"),
-    //         Relation.LOCATION, new InsertForm("location_id", "country", "city", "state")
-    // ));
-
     private final Map<String, InsertForm> formMap = new HashMap<>();
 
     private JPanel activePanel;
     private JPanel mainPanel = new JPanel();
-    private JPanel form = new JPanel(); // contains the labels and text fields
-    private JComboBox<String> comboBox; // = new JComboBox<>(Relation.values());
+    private JPanel form = new JPanel(); 
+    private JComboBox<String> comboBox;
 
     public InsertPanel() {
         initializeMap();
@@ -45,10 +39,15 @@ public class InsertPanel {
         JButton insertButton = new JButton("Insert");
         insertButton.addActionListener(e -> insertData());
 
+        // Reset database button
+        JButton resetButton = new JButton("Reset Database");
+        resetButton.addActionListener(e -> resetDatabase());
+
         // Add all remaining components
         verticalBox.add(comboBox);
         verticalBox.add(form);
         verticalBox.add(insertButton);
+        verticalBox.add(resetButton);
 
         mainPanel.add(verticalBox);
         mainPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
@@ -63,8 +62,9 @@ public class InsertPanel {
             ResultSetMetaData rsmd = DatabaseMenu.getColumnRSMDFromTable(RunGUI.resultSet, table);
 
             ArrayList<String> attributes = DatabaseMenu.getColumnsFromRSMD(rsmd);
+            ArrayList<String> types = DatabaseMenu.mapSQLTypeArrayToString(DatabaseMenu.getColumnTypesFromRSMD(rsmd));
 
-            formMap.put(table, new InsertForm(attributes));
+            formMap.put(table, new InsertForm(attributes, types));
         }
     }
 
@@ -106,6 +106,15 @@ public class InsertPanel {
         ArrayList<String> values = textFieldMap.values().stream().map(JTextComponent::getText).collect(Collectors.toCollection(ArrayList::new));
         ArrayList<String> columns = textFieldMap.keySet().stream().map(JLabel::getText).collect(Collectors.toCollection(ArrayList::new));
 
+        boolean hasEmptyValue = values.stream().anyMatch(val -> val.trim().equals(""));
+
+        if(hasEmptyValue) {
+            String msg = "Please enter values for all fields before trying to insert";
+            JOptionPane.showMessageDialog(null, msg);
+
+            return;
+        }
+        
         String tableName = comboBox.getSelectedItem().toString();
 
         if(RunGUI.DEBUG) {
@@ -123,6 +132,16 @@ public class InsertPanel {
 
         // Clear the text fields
         textFieldMap.values().stream().forEach(field -> field.setText(""));
+
+        String msg = "Your values were inserted into the " + tableName + " table!";
+        JOptionPane.showMessageDialog(null, msg);
+    }
+
+    private void resetDatabase() {
+        DatabaseMenu.resetDatabase();
+
+        String msg = "The database has been reset to its default values";
+        JOptionPane.showMessageDialog(null, msg);
     }
 
 }

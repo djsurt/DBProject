@@ -20,8 +20,6 @@ public class RunGUI {
         tableNames = DatabaseMenu.getTablesFromRS(resultSet);
         tableNames.remove(tableNames.size()-1);
 
-        // tableNames.stream().forEach(System.out::println);
-
         // Set up the GUI
         JFrame frame = new JFrame("Computer Science Jobs Database");
 
