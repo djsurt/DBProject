@@ -393,6 +393,21 @@ public class DatabaseMenu {
             case 5:
                 StoredProcedures.GetBenefitInfoByCityFromState();
                 break;
+            case 6:
+                StoredProcedures.GetPopularJobsByApplicationsFromPrestige();
+                break;
+            case 7:
+                StoredProcedures.SelectJobsWithPaidTimeOffGreaterThan();
+                break;
+            case 8:
+                StoredProcedures.GetPopularLocationsByApplicationFromRole();
+                break;
+            case 9:
+                StoredProcedures.SelectJobsFromCompanyPostedWithinDateRange();
+                break;
+            case 10:
+                StoredProcedures.SelectUsersAppliedForCycle();
+                break;
             default:
                 System.out.println("You did not input a valid option. Please try again.");
                 break;
