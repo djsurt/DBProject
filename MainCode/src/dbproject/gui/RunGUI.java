@@ -1,23 +1,28 @@
 package dbproject.gui;
 
+import java.sql.*;
+import java.util.ArrayList;
+
 import dbproject.DatabaseMenu;
 import javax.swing.*;
-import java.sql.*;
 
 public class RunGUI {
 
     public final static boolean DEBUG = false;
+    public static ResultSet resultSet;
+    public static ArrayList<String> tableNames;
 
     public static void main(String[] args) {
-<<<<<<< HEAD
         // Connect to the database
         DatabaseMenu.connectToDatabase(DatabaseMenu.connectionUrl);
 
-        // Set up the GUI
-=======
-        DatabaseMenu.connectToDatabase(DatabaseMenu.connectionUrl);
+        resultSet = DatabaseMenu.getTableResultSet();
+        tableNames = DatabaseMenu.getTablesFromRS(resultSet);
+        tableNames.remove(tableNames.size()-1);
 
->>>>>>> aaa684f392798c9d336e7a71168d6b591412e6cf
+        // tableNames.stream().forEach(System.out::println);
+
+        // Set up the GUI
         JFrame frame = new JFrame("Computer Science Jobs Database");
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

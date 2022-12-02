@@ -1,39 +1,44 @@
 package dbproject.gui;
-import dbproject.DatabaseMenu;
 
 import dbproject.DatabaseMenu;
+import java.sql.*;
 import javax.swing.*;
 import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public class InsertPanel {
 
-    private final EnumMap<Relation, InsertForm> formMap = new EnumMap<>(Map.of(
-            Relation.COMPANY, new InsertForm("company_id", "name", "hq_location", "tier", "industry", "num_employees"),
-            Relation.JOBS, new InsertForm("job_id", "company_id", "type", "role", "description", "benefit_id", "required_yoe", "location_id", "cycle", "date_opened"),
-            Relation.LOCATION, new InsertForm("location_id", "country", "city", "state")
-    ));
+    // private final EnumMap<Relation, InsertForm> formMap = new EnumMap<>(Map.of(
+    //         Relation.COMPANY, new InsertForm("company_id", "name", "hq_location", "tier", "industry", "num_employees"),
+    //         Relation.JOBS, new InsertForm("job_id", "company_id", "type", "role", "description", "benefit_id", "required_yoe", "location_id", "cycle", "date_opened"),
+    //         Relation.LOCATION, new InsertForm("location_id", "country", "city", "state")
+    // ));
+
+    private final Map<String, InsertForm> formMap = new HashMap<>();
 
     private JPanel activePanel;
     private JPanel mainPanel = new JPanel();
     private JPanel form = new JPanel(); // contains the labels and text fields
-    private JComboBox<Relation> comboBox = new JComboBox<>(Relation.values());
+    private JComboBox<String> comboBox; // = new JComboBox<>(Relation.values());
 
     public InsertPanel() {
-
-//        initializeMap();
+        initializeMap();
 
         Box verticalBox = Box.createVerticalBox();
 
+        // Set up the combobox
+        String[] tableNames = RunGUI.tableNames.toArray(new String[RunGUI.tableNames.size()]);
+
+        comboBox = new JComboBox<>(tableNames);
+
         // Set the default active panel
-        activePanel = getActivePanel((Relation) comboBox.getSelectedItem());
+        activePanel = getActivePanel((String) comboBox.getSelectedItem());
         form.add(activePanel);
 
-        // Changing active panel when combo box is changed
         comboBox.addActionListener (e ->  setActivePanel());
 
         // Insert button
@@ -50,6 +55,20 @@ public class InsertPanel {
     }
 
     /**
+     * Fills the formMap
+     */
+    private void initializeMap() {
+        
+        for(String table : RunGUI.tableNames) {
+            ResultSetMetaData rsmd = DatabaseMenu.getColumnRSMDFromTable(RunGUI.resultSet, table);
+
+            ArrayList<String> attributes = DatabaseMenu.getColumnsFromRSMD(rsmd);
+
+            formMap.put(table, new InsertForm(attributes));
+        }
+    }
+
+    /**
      * @return the main JPanel
      */
     public JPanel panel() {
@@ -62,12 +81,12 @@ public class InsertPanel {
      * @param key a Relation name
      * @return JPanel
      */
-    private JPanel getActivePanel(Relation key) {
+    private JPanel getActivePanel(String key) {
         return formMap.get(key).panel();
     }
 
     private void setActivePanel() {
-        JPanel newActivePanel = getActivePanel((Relation) comboBox.getSelectedItem());
+        JPanel newActivePanel = getActivePanel((String) comboBox.getSelectedItem());
 
         form.removeAll();
         form.revalidate(); // refreshes the panel
@@ -80,7 +99,7 @@ public class InsertPanel {
      * Insert data into the database
      */
     private void insertData() {
-        InsertForm current = formMap.get((Relation) comboBox.getSelectedItem());
+        InsertForm current = formMap.get((String) comboBox.getSelectedItem());
 
         Map<JLabel, JTextField> textFieldMap = current.textFieldMap();
 
@@ -100,11 +119,10 @@ public class InsertPanel {
             values.stream().forEach(val -> System.out.print(val + " "));
         }
 
-<<<<<<< HEAD
-         DatabaseMenu.insertData(values, columns, tableName);
-=======
         DatabaseMenu.insertData(values, columns, tableName);
->>>>>>> aaa684f392798c9d336e7a71168d6b591412e6cf
+
+        // Clear the text fields
+        textFieldMap.values().stream().forEach(field -> field.setText(""));
     }
 
 }

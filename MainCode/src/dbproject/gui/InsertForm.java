@@ -2,6 +2,7 @@ package dbproject.gui;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -11,17 +12,17 @@ public class InsertForm {
     private GridLayout grid;
     private Map<JLabel, JTextField> textFieldMap = new LinkedHashMap<>();
 
-    public InsertForm(String... fields) {
+    public InsertForm(ArrayList<String> fields) {
 
-        grid = new GridLayout(fields.length, 2);
+        grid = new GridLayout(fields.size(), 2);
         grid.setVgap(5);
         grid.setHgap(10);
 
         panel.setLayout(grid);
-        panel.setPreferredSize(new Dimension(500, fields.length * 30));
+        panel.setPreferredSize(new Dimension(500, fields.size() * 30));
 
-        for(int i = 0; i < fields.length; i++) {
-            String labelText = fields[i];
+        for(int i = 0; i < fields.size(); i++) {
+            String labelText = fields.get(i);
 
             JLabel label = new JLabel(labelText);
             JTextField textField = new JTextField();
