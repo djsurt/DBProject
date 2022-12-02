@@ -104,12 +104,12 @@ public class StoredProcedures {
     public static void SelectJobsFromCompany() {
 
         String funcName = "SelectJobsFromCompany";
-        String query = "EXEC " +funcName+ " @Company=?"; // @Company refers to Company.name
+        String query = "EXEC " +funcName+ " @CompanyID=?"; // @Company refers to Company.name
 
         // Get user input
         sc.nextLine();
 
-        System.out.println("Enter a company (e.g. Google): ");
+        System.out.println("Enter a company ID (e.g. 1): ");
         String company = sc.nextLine();
 
         // Execute the query
@@ -184,13 +184,15 @@ public class StoredProcedures {
     public static void SelectJobInfoWithParameters() {
 
         String funcName = "SelectJobInfoWithParameters";
-        String query = "EXEC " +funcName+ " @Cycle=?, @State=?, @Role=?";
+        String query = "EXEC " +funcName+ " @Cycle=?, @Country=?, @State=?, @Role=?";
 
         // Get user input
         sc.nextLine();
 
         System.out.println("Enter a cycle (e.g. Summer): ");
         String cycle = sc.nextLine();
+        System.out.println("Enter a country (e.g. USA): ");
+        String country = sc.nextLine();
         System.out.println("Enter a state (e.g. Ohio): ");
         String state = sc.nextLine();
         System.out.println("Enter a role (e.g. Software Engineering): ");
@@ -205,8 +207,9 @@ public class StoredProcedures {
             // Access Database
             PreparedStatement pstmt = conn.prepareStatement(query);
             pstmt.setString(1, cycle);
-            pstmt.setString(2, state);
-            pstmt.setString(3, role);
+            pstmt.setString(2, country);
+            pstmt.setString(3, state);
+            pstmt.setString(4, role);
 
             // Query Call
             resultSet = pstmt.executeQuery();
@@ -352,7 +355,7 @@ public class StoredProcedures {
      */
     public static void GetPopularLocationsByApplicationFromRole() {
 
-        String funcName = "SelectJobsWithPaidTimeOffGreaterThan";
+        String funcName = "GetPopularLocationsByApplicationFromRole";
         String query = "EXEC " +funcName+ " @Role=?";
 
         // Get user input
@@ -436,7 +439,7 @@ public class StoredProcedures {
      */
     public static void SelectUsersAppliedForCycle() {
 
-        String funcName = "SelectUsersAppliedForCycle";
+        String funcName = "SelectUsersAppliedForCycle1";
         String query = "EXEC " +funcName+ " @Cycle=?";
 
         // Get user input
