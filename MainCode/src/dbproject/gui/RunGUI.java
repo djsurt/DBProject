@@ -9,10 +9,15 @@ public class RunGUI {
     public final static boolean DEBUG = false;
 
     public static void main(String[] args) {
+<<<<<<< HEAD
         // Connect to the database
         DatabaseMenu.connectToDatabase(DatabaseMenu.connectionUrl);
 
         // Set up the GUI
+=======
+        DatabaseMenu.connectToDatabase(DatabaseMenu.connectionUrl);
+
+>>>>>>> aaa684f392798c9d336e7a71168d6b591412e6cf
         JFrame frame = new JFrame("Computer Science Jobs Database");
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

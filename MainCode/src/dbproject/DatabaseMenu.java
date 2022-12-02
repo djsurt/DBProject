@@ -2,6 +2,7 @@ package dbproject;
 
 import java.util.List;
 import java.util.Scanner;
+import java.util.zip.DataFormatException;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -978,25 +979,36 @@ public class DatabaseMenu {
      * @param rows
      * @return string version of what is printed
      */
-    public static String formatAsTable(ArrayList<ArrayList<String>> rows) {
-        int[] maxLengths = new int[rows.get(0).size()];
-        for (ArrayList<String> row : rows) {
+    public static String formatAsTable(ArrayList<ArrayList<String>> data) {
+        // Retrieves the size of the first row
+        int[] max_sizes = new int[data.get(0).size()];
+
+        /**
+         * Fills max_sizes with the maximum string lengths
+         */
+        for (ArrayList<String> row : data) {
             for (int i = 0; i < row.size(); i++)
             {
-                maxLengths[i] = Math.max(maxLengths[i], row.get(i).length());
+                max_sizes[i] = Math.max(max_sizes[i], row.get(i).length());
             }
         }
 
-        StringBuilder formatBuilder = new StringBuilder();
-        for (int maxLength : maxLengths) {
-            formatBuilder.append("%-").append(maxLength + 2).append("s");
+        /**
+         * Creates StringBuilder for formatting
+         */
+        StringBuilder builder = new StringBuilder();
+        for (int size : max_sizes) {
+            builder.append("%-").append(size + 2).append("s");
         }
-        String format = formatBuilder.toString();
 
-        StringBuilder result = new StringBuilder();
-        for (ArrayList<String> row : rows) {
-            result.append(String.format(format, row.toArray(new String[0]))).append("\n");
+        /**
+         * Returns output with StringBuilder
+         */
+        String format = builder.toString();
+        StringBuilder output = new StringBuilder();
+        for (ArrayList<String> row : data) {
+            output.append(String.format(format, row.toArray(new String[0]))).append("\n");
         }
-        return result.toString();
+        return output.toString();
     }
 }

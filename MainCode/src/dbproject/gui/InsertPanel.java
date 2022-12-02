@@ -1,6 +1,7 @@
 package dbproject.gui;
 import dbproject.DatabaseMenu;
 
+import dbproject.DatabaseMenu;
 import javax.swing.*;
 import javax.swing.text.JTextComponent;
 import java.awt.*;
@@ -99,7 +100,11 @@ public class InsertPanel {
             values.stream().forEach(val -> System.out.print(val + " "));
         }
 
+<<<<<<< HEAD
          DatabaseMenu.insertData(values, columns, tableName);
+=======
+        DatabaseMenu.insertData(values, columns, tableName);
+>>>>>>> aaa684f392798c9d336e7a71168d6b591412e6cf
     }
 
 }
