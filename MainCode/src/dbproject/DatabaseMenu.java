@@ -351,25 +351,22 @@ public class DatabaseMenu {
 
     // Stored procedures the user can select from
     private static final List<String> storedProcMenuOptions = List.of(
-            "Get Number of Users Who Applied to a Company",
-            "Select Jobs From Company",
-            "Select Jobs From Industry",
-            "Select Jobs from Cycle, State, and Role",
-            "Get Benefit Info By City From State"
+        "Get # of Users Who Applied to a Company",
+        "Select Jobs From Company",
+        "Select Jobs From Industry",
+        "Select Jobs from Cycle, State, and Role",
+        "Get Benefit Info By City From State",
+        "Get Popular Jobs Based on # of Applications from Prestige",
+        "Select jobs with paid time off greater than ___",
+        "Get List of Popular Locations by # of Applications From Role",
+        "Select Jobs From Company Posted Within Date Range",
+        "Select Use Who Applied to a Cycle"
     );
 
     /**
     * SpecialSelectInterface - runs the special select menu
     */
     public static void specialSelectInterface() {
-        List<String> menuOptions = List.of(
-            "Get Number of Users Who Applied to a Company",
-            "Select Jobs From Company",
-            "Select Jobs From Industry",
-            "Select Jobs from Cycle, State, and Role",
-            "Get Benefit Info By City From State"
-        );
-
         // Print menu options
         printMenu("Database Menu", storedProcMenuOptions);
 
