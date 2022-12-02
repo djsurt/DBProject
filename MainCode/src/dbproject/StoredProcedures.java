@@ -59,455 +59,413 @@ public class StoredProcedures {
     /**
      * Stored Procedure 1
      *
-     * Get all the companies from a specific location
+     * Use case: Get the number of users who have applied to given company
      */
-    public static void selectCompaniesWithLocation() {
+    public static void GetNumUsersAppliedToCompany() {
 
-        String funcName = "SelectCompaniesWithLocation";
+        String funcName = "GetNumUsersAppliedToCompany";
+        String query = "EXEC " +funcName+ " @Company=?"; // @Company refers to Company.name
 
-        // Create the query
-        String query = "EXEC " +funcName+ " @Country=?, @City=?, @State=?";
-
+        // Get user input
         sc.nextLine();
-        System.out.println("Please enter a value for Country of type Varchar...");
-        String country = sc.nextLine();
-        System.out.println("Please enter a value for State of type Varchar...");
-        String state = sc.nextLine();
-        System.out.println("Please enter a value for City of type Varchar...");
-        String city = sc.nextLine();
 
-        /*
-         * Execute Query
-         */
-        ResultSet rs = null;
-        ResultSetMetaData rsmd = null;
+        System.out.println("Enter a company (e.g. Google): ");
+        String company = sc.nextLine();
+
+        // Execute the query
+        ResultSet resultSet = null;
+        ResultSetMetaData resultSetMetaData = null;
         int colCount = 0;
+
         try{
             // Access Database
             PreparedStatement pstmt = conn.prepareStatement(query);
-            pstmt.setString(1, country);
-            pstmt.setString(2, city);
-            pstmt.setString(3, state);
+            pstmt.setString(1, company);
 
             // Query Call
-            rs = pstmt.executeQuery();
-            rsmd = rs.getMetaData();
-            colCount = rsmd.getColumnCount();
+            resultSet = pstmt.executeQuery();
+            resultSetMetaData = resultSet.getMetaData();
+            colCount = resultSetMetaData.getColumnCount();
 
         }
         catch (SQLException e) {
             e.printStackTrace();
         }
 
-        printQueryResult(funcName, colCount, rs, rsmd);
+        // Print the results
+        printQueryResult(funcName, colCount, resultSet, resultSetMetaData);
     }
 
     /**
      * Stored Procedure 2
      *
-     * Get all the companies with a certain prestige level
+     * Use case: Select all jobs from a specific company
      */
-    public static void selectCompanyFromPrestige() {
+    public static void SelectJobsFromCompany() {
 
-        String funcName = "SelectCompanyFromPrestige";
+        String funcName = "SelectJobsFromCompany";
+        String query = "EXEC " +funcName+ " @Company=?"; // @Company refers to Company.name
 
-        // Create query
-        String query = "EXEC " +funcName+ " @Prestige=?";
-
+        // Get user input
         sc.nextLine();
 
-        // Getting user input
-        System.out.println("Enter a prestige level: ");
-        String prestige = sc.nextLine();
+        System.out.println("Enter a company (e.g. Google): ");
+        String company = sc.nextLine();
 
-        // Execute query
-        ResultSet rs = null;
-        ResultSetMetaData rsmd = null;
+        // Execute the query
+        ResultSet resultSet = null;
+        ResultSetMetaData resultSetMetaData = null;
         int colCount = 0;
 
-        try {
+        try{
             // Access Database
             PreparedStatement pstmt = conn.prepareStatement(query);
-            pstmt.setString(1, prestige);
+            pstmt.setString(1, company);
 
             // Query Call
-            rs = pstmt.executeQuery();
-            rsmd = rs.getMetaData();
-            colCount = rsmd.getColumnCount();
+            resultSet = pstmt.executeQuery();
+            resultSetMetaData = resultSet.getMetaData();
+            colCount = resultSetMetaData.getColumnCount();
 
         }
         catch (SQLException e) {
             e.printStackTrace();
         }
 
-        // Print the result
-        printQueryResult(funcName, colCount, rs, rsmd);
+        // Print the results
+        printQueryResult(funcName, colCount, resultSet, resultSetMetaData);
     }
 
     /**
      * Stored Procedure 3
      *
-     * Get all the companies from a specific industry (e.g. Technology)
+     * Use case: Select all jobs from a specific industry
      */
-    public static void selectCompanyFromIndustry() {
+    public static void SelectJobsFromIndustry() {
 
-        String funcName = "SelectCompanyFromIndustry";
+        String funcName = "SelectJobsFromIndustry";
+        String query = "EXEC " +funcName+ " @Industry=?"; // @Industry refers to Company.industry
 
-        // Create query
-        String query = "EXEC " +funcName+ " @Industry=?";
-
+        // Get user input
         sc.nextLine();
 
-        // Getting user input
-        System.out.println("Enter an industry: ");
+        System.out.println("Enter an industry (e.g. Defense): ");
         String industry = sc.nextLine();
 
-        // Execute query
-        ResultSet rs = null;
-        ResultSetMetaData rsmd = null;
+        // Execute the query
+        ResultSet resultSet = null;
+        ResultSetMetaData resultSetMetaData = null;
         int colCount = 0;
 
-        try {
+        try{
             // Access Database
             PreparedStatement pstmt = conn.prepareStatement(query);
             pstmt.setString(1, industry);
 
             // Query Call
-            rs = pstmt.executeQuery();
-            rsmd = rs.getMetaData();
-            colCount = rsmd.getColumnCount();
+            resultSet = pstmt.executeQuery();
+            resultSetMetaData = resultSet.getMetaData();
+            colCount = resultSetMetaData.getColumnCount();
 
         }
         catch (SQLException e) {
             e.printStackTrace();
         }
 
-        // Print the result
-        printQueryResult(funcName, colCount, rs, rsmd);
+        // Print the results
+        printQueryResult(funcName, colCount, resultSet, resultSetMetaData);
     }
 
     /**
      * Stored Procedure 4
      *
-     * Get all the companies with a number of employees between a given range
+     * Use case: Get all jobs, with company name and benefits, during a specific cycle, at a specific state, and for a specific role
      */
-    public static void selectCompanyFromEmployeeRange() {
+    public static void SelectJobInfoWithParameters() {
 
-        String funcName = "SelectCompanyFromEmployeeRange";
+        String funcName = "SelectJobInfoWithParameters";
+        String query = "EXEC " +funcName+ " @Cycle=?, @State=?, @Role=?";
 
-        // Create query
-        String query = "EXEC " +funcName+ " @Lowerbound=?, @Upperbound=?";
-
+        // Get user input
         sc.nextLine();
 
-        // Getting user input
-        System.out.println("Enter a minimum number of employees (inclusive): ");
-        int lowerbound = Integer.parseInt(sc.nextLine());
+        System.out.println("Enter a cycle (e.g. Summer): ");
+        String cycle = sc.nextLine();
+        System.out.println("Enter a state (e.g. Ohio): ");
+        String state = sc.nextLine();
+        System.out.println("Enter a role (e.g. Software Engineering): ");
+        String role = sc.nextLine();
 
-        System.out.println("Enter a maximum number of employees (exclusive): ");
-        int upperbound = Integer.parseInt(sc.nextLine());
-
-        // Execute query
-        ResultSet rs = null;
-        ResultSetMetaData rsmd = null;
+        // Execute the query
+        ResultSet resultSet = null;
+        ResultSetMetaData resultSetMetaData = null;
         int colCount = 0;
 
-        try {
+        try{
             // Access Database
             PreparedStatement pstmt = conn.prepareStatement(query);
-            pstmt.setInt(1, lowerbound);
-            pstmt.setInt(2, upperbound);
+            pstmt.setString(1, cycle);
+            pstmt.setString(2, state);
+            pstmt.setString(3, role);
 
             // Query Call
-            rs = pstmt.executeQuery();
-            rsmd = rs.getMetaData();
-            colCount = rsmd.getColumnCount();
+            resultSet = pstmt.executeQuery();
+            resultSetMetaData = resultSet.getMetaData();
+            colCount = resultSetMetaData.getColumnCount();
 
         }
         catch (SQLException e) {
             e.printStackTrace();
         }
 
-        // Print the result
-        printQueryResult(funcName, colCount, rs, rsmd);
+        // Print the results
+        printQueryResult(funcName, colCount, resultSet, resultSetMetaData);
     }
 
     /**
      * Stored Procedure 5
      *
-     * Get all jobs from a specific cycle (e.g. Summer)
+     * Use case: Get mean, min, and max insurance and paid time off benefits by city for a specific state
      */
-    public static void selectJobsFromCycle() {
+    public static void GetBenefitInfoByCityFromState() {
 
-        String funcName = "SelectJobsFromCycle";
+        String funcName = "GetBenefitInfoByCityFromState";
+        String query = "EXEC " +funcName+ " @Country=?, @State=?";
 
-        // Create query
-        String query = "EXEC " +funcName+ " @CycleName=?";
-
+        // Get user input
         sc.nextLine();
 
-        // Getting user input
-        System.out.println("Enter a cycle (e.g. Summer): ");
-        String cycle = sc.nextLine();
+        System.out.println("Enter a country (e.g. USA): ");
+        String country = sc.nextLine();
+        System.out.println("Enter a state (e.g. Ohio): ");
+        String state = sc.nextLine();
 
-        // Execute query
-        ResultSet rs = null;
-        ResultSetMetaData rsmd = null;
+        // Execute the query
+        ResultSet resultSet = null;
+        ResultSetMetaData resultSetMetaData = null;
         int colCount = 0;
 
-        try {
+        try{
             // Access Database
             PreparedStatement pstmt = conn.prepareStatement(query);
-            pstmt.setString(1, cycle);
+            pstmt.setString(1, country);
+            pstmt.setString(2, state);
 
             // Query Call
-            rs = pstmt.executeQuery();
-            rsmd = rs.getMetaData();
-            colCount = rsmd.getColumnCount();
+            resultSet = pstmt.executeQuery();
+            resultSetMetaData = resultSet.getMetaData();
+            colCount = resultSetMetaData.getColumnCount();
 
         }
         catch (SQLException e) {
             e.printStackTrace();
         }
 
-        // Print the result
-        printQueryResult(funcName, colCount, rs, rsmd);
+        // Print the results
+        printQueryResult(funcName, colCount, resultSet, resultSetMetaData);
     }
 
     /**
      * Stored Procedure 6
      *
-     * Get all jobs from with a total compensation between a given range
+     * Use case: Get ordered list of most applied to jobs within a specific prestige
      */
-    public static void selectJobFromCompensationRange() {
+    public static void GetPopularJobsByApplicationsFromPrestige() {
 
-        String funcName = "SelectJobFromCompensationRange";
+        String funcName = "GetPopularJobsByApplicationsFromPrestige";
+        String query = "EXEC " +funcName+ " @Prestige=?";
 
-        // Create query
-        String query = "EXEC " +funcName+ " @Lowerbound=?, @Upperbound=?";
-
+        // Get user input
         sc.nextLine();
 
-        // Getting user input
-        System.out.println("Enter a minimum number for total compensation (inclusive): ");
-        int lowerbound = Integer.parseInt(sc.nextLine());
+        System.out.println("Enter a prestige (e.g. FAANG): ");
+        String prestige = sc.nextLine();
 
-        System.out.println("Enter a maximum number for total compensation (inclusive): ");
-        int upperbound = Integer.parseInt(sc.nextLine());
-
-        // Execute query
-        ResultSet rs = null;
-        ResultSetMetaData rsmd = null;
+        // Execute the query
+        ResultSet resultSet = null;
+        ResultSetMetaData resultSetMetaData = null;
         int colCount = 0;
 
-        try {
+        try{
             // Access Database
             PreparedStatement pstmt = conn.prepareStatement(query);
-            pstmt.setInt(1, lowerbound);
-            pstmt.setInt(2, upperbound);
+            pstmt.setString(1, prestige);
 
             // Query Call
-            rs = pstmt.executeQuery();
-            rsmd = rs.getMetaData();
-            colCount = rsmd.getColumnCount();
+            resultSet = pstmt.executeQuery();
+            resultSetMetaData = resultSet.getMetaData();
+            colCount = resultSetMetaData.getColumnCount();
+
         }
         catch (SQLException e) {
             e.printStackTrace();
         }
 
-        // Print the result
-        printQueryResult(funcName, colCount, rs, rsmd);
+        // Print the results
+        printQueryResult(funcName, colCount, resultSet, resultSetMetaData);
     }
 
     /**
      * Stored Procedure 7
      *
-     * Get all the jobs with a specified minimum years of experience
+     * Use case: Get all the jobs with some paid time off
      */
-    public static void selectJobFromYearsOfExperience() {
+    public static void SelectJobsWithPaidTimeOffGreaterThan() {
 
-        String funcName = "SelectJobFromYearsOfExperience";
+        String funcName = "SelectJobsWithPaidTimeOffGreaterThan";
+        String query = "EXEC " +funcName+ " @PaidTime=?";
 
-        // Create query
-        String query = "EXEC " +funcName+ " @Min=?";
-
+        // Get user input
         sc.nextLine();
 
-        // Getting user input
-        System.out.println("Enter a minimum number for years of experience: ");
-        int min = Integer.parseInt(sc.nextLine());
+        System.out.println("Enter a minimum amount of paid time off (e.g. 5): ");
+        int paidTime = Integer.parseInt(sc.nextLine());
 
-        // Execute query
-        ResultSet rs = null;
-        ResultSetMetaData rsmd = null;
+        // Execute the query
+        ResultSet resultSet = null;
+        ResultSetMetaData resultSetMetaData = null;
         int colCount = 0;
 
-        try {
+        try{
             // Access Database
             PreparedStatement pstmt = conn.prepareStatement(query);
-            pstmt.setInt(1, min);
+            pstmt.setInt(1, paidTime);
 
             // Query Call
-            rs = pstmt.executeQuery();
-            rsmd = rs.getMetaData();
-            colCount = rsmd.getColumnCount();
+            resultSet = pstmt.executeQuery();
+            resultSetMetaData = resultSet.getMetaData();
+            colCount = resultSetMetaData.getColumnCount();
+
         }
         catch (SQLException e) {
             e.printStackTrace();
         }
 
-        // Print the result
-        printQueryResult(funcName, colCount, rs, rsmd);
+        // Print the results
+        printQueryResult(funcName, colCount, resultSet, resultSetMetaData);
     }
 
     /**
      * Stored Procedure 8
      *
-     * Get all the jobs with some paid time off
+     * Use case: Get an ordered list of the most applied to locations for a specific role
      */
-    public static void selectJobsWithPaidTimeOff() {
+    public static void GetPopularLocationsByApplicationFromRole() {
 
-        String funcName = "SelectJobsWithPaidTimeOff";
+        String funcName = "SelectJobsWithPaidTimeOffGreaterThan";
+        String query = "EXEC " +funcName+ " @Role=?";
 
-        // Create query
-        String query = "EXEC " +funcName;
+        // Get user input
+        sc.nextLine();
 
-        // Execute query
-        ResultSet rs = null;
-        ResultSetMetaData rsmd = null;
+        System.out.println("Enter a role (e.g. Software Engineering): ");
+        String role = sc.nextLine();
+
+        // Execute the query
+        ResultSet resultSet = null;
+        ResultSetMetaData resultSetMetaData = null;
         int colCount = 0;
 
-        try {
+        try{
             // Access Database
             PreparedStatement pstmt = conn.prepareStatement(query);
+            pstmt.setString(1, role);
 
             // Query Call
-            rs = pstmt.executeQuery();
-            rsmd = rs.getMetaData();
-            colCount = rsmd.getColumnCount();
+            resultSet = pstmt.executeQuery();
+            resultSetMetaData = resultSet.getMetaData();
+            colCount = resultSetMetaData.getColumnCount();
+
         }
         catch (SQLException e) {
             e.printStackTrace();
         }
 
-        // Print the result
-        printQueryResult(funcName, colCount, rs, rsmd);
+        // Print the results
+        printQueryResult(funcName, colCount, resultSet, resultSetMetaData);
     }
 
     /**
      * Stored Procedure 9
      *
-     * Get all the jobs from JobsFollowed that have been applied to
+     * Use case: Get all jobs that were posted within a specific date range (inclusive) from a specific company
      */
-    public static void selectJobsAppliedTo() {
+    public static void SelectJobsFromCompanyPostedWithinDateRange() {
 
-        String funcName = "SelectJobsAppliedTo";
-
-        // Create query
-        String query = "EXEC " +funcName;
-
-        sc.nextLine();
-
-        // Execute query
-        ResultSet rs = null;
-        ResultSetMetaData rsmd = null;
-        int colCount = 0;
-
-        try {
-            // Access Database
-            PreparedStatement pstmt = conn.prepareStatement(query);
-
-            // Query Call
-            rs = pstmt.executeQuery();
-            rsmd = rs.getMetaData();
-            colCount = rsmd.getColumnCount();
-        }
-        catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        // Print the result
-        printQueryResult(funcName, colCount, rs, rsmd);
-    }
-
-    /**
-     * Stored Procedure 10
-     *
-     * Get all jobs that were posted within a specific date range
-     */
-    public static void selectJobsPostedWithinDateRange() {
-
-        String funcName = "selectJobsPostedWithinDateRange";
-
-        // Create query
+        //TODO: add a 1 to the end of funcName if Dhananjay can't fix it in SSMS
+        String funcName = "SelectJobsFromCompanyPostedWithinDateRange";
         String query = "EXEC " +funcName+ " @Lowerbound=?, @Upperbound=?";
 
+        // Get user input
         sc.nextLine();
 
-        // Getting user input
-        System.out.println("Enter a start date (inclusive): ");
+        System.out.println("Enter a lower bound for the date (e.g. 2022-03-01): ");
         int lowerbound = Integer.parseInt(sc.nextLine());
-
-        System.out.println("Enter an end date (inclusive): ");
+        System.out.println("Enter an upper bound (e.g. 2022-10-17): ");
         int upperbound = Integer.parseInt(sc.nextLine());
 
-        // Execute query
-        ResultSet rs = null;
-        ResultSetMetaData rsmd = null;
+        // Execute the query
+        ResultSet resultSet = null;
+        ResultSetMetaData resultSetMetaData = null;
         int colCount = 0;
 
-        try {
+        try{
             // Access Database
             PreparedStatement pstmt = conn.prepareStatement(query);
             pstmt.setInt(1, lowerbound);
             pstmt.setInt(2, upperbound);
 
             // Query Call
-            rs = pstmt.executeQuery();
-            rsmd = rs.getMetaData();
-            colCount = rsmd.getColumnCount();
+            resultSet = pstmt.executeQuery();
+            resultSetMetaData = resultSet.getMetaData();
+            colCount = resultSetMetaData.getColumnCount();
+
         }
         catch (SQLException e) {
             e.printStackTrace();
         }
 
-        // Print the result
-        printQueryResult(funcName, colCount, rs, rsmd);
+        // Print the results
+        printQueryResult(funcName, colCount, resultSet, resultSetMetaData);
     }
 
     /**
-     * Stored Procedure 11
+     * Stored Procedure 10
      *
-     * Get all jobs that were posted within a specific date range
+     * Use case: Get all users who applied to jobs within a specific cycle
      */
-    public static void selectUsersFollowingAtLeastOneJob() {
+    public static void SelectUsersAppliedForCycle() {
 
-        String funcName = "SelectUsersFollowingAtLeastOneJob";
+        String funcName = "SelectUsersAppliedForCycle";
+        String query = "EXEC " +funcName+ " @Cycle=?";
 
-        // Create query
-        String query = "EXEC " +funcName;
-
+        // Get user input
         sc.nextLine();
 
-        // Execute query
-        ResultSet rs = null;
-        ResultSetMetaData rsmd = null;
+        System.out.println("Enter a cycle (e.g. Summer): ");
+        String cycle = sc.nextLine();
+
+        // Execute the query
+        ResultSet resultSet = null;
+        ResultSetMetaData resultSetMetaData = null;
         int colCount = 0;
 
-        try {
+        try{
             // Access Database
             PreparedStatement pstmt = conn.prepareStatement(query);
+            pstmt.setString(1, cycle);
 
             // Query Call
-            rs = pstmt.executeQuery();
-            rsmd = rs.getMetaData();
-            colCount = rsmd.getColumnCount();
+            resultSet = pstmt.executeQuery();
+            resultSetMetaData = resultSet.getMetaData();
+            colCount = resultSetMetaData.getColumnCount();
+
         }
         catch (SQLException e) {
             e.printStackTrace();
         }
 
-        // Print the result
-        printQueryResult(funcName, colCount, rs, rsmd);
+        // Print the results
+        printQueryResult(funcName, colCount, resultSet, resultSetMetaData);
     }
 }
