@@ -1,3 +1,7 @@
+/**
+ * This file contains the code to run the extra credit GUI
+ */
+
 package dbproject.gui;
 
 import java.sql.*;

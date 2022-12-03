@@ -1,3 +1,7 @@
+/**
+ * This file contains the code for all 10 of our stored procedures
+ */
+
 package dbproject;
 
 import java.sql.*;

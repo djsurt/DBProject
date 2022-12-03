@@ -1,8 +1,11 @@
+/**
+ * This file contains the code to run the command line interface
+ */
+
 package dbproject;
 
 import java.util.List;
 import java.util.Scanner;
-import java.util.zip.DataFormatException;
 import java.sql.*;
 import java.util.ArrayList;
 
