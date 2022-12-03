@@ -104,12 +104,12 @@ public class StoredProcedures {
     public static void SelectJobsFromCompany() {
 
         String funcName = "SelectJobsFromCompany";
-        String query = "EXEC " +funcName+ " @CompanyID=?"; // @Company refers to Company.name
+        String query = "EXEC " +funcName+ " @Company=?"; // @Company refers to Company.name
 
         // Get user input
         sc.nextLine();
 
-        System.out.println("Enter a company ID (e.g. 1): ");
+        System.out.println("Enter a company (e.g. Google): ");
         String company = sc.nextLine();
 
         // Execute the query
