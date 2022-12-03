@@ -1,18 +1,13 @@
-## Getting Started
+## CSDS 341 Introduction to Database Systems
 
-Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
+Course: CSDS 341 Introduction to Database Systems with Professor Dianne Foreback (Fall 2022)<br>
+Group Members: Eric Elizes, Omar Loudghiri, Georgia Martinez, Samuel Michalski, Dhananjay Surti
 
-## Folder Structure
+The code for the command line is located inside `MainCode/src/dbproject/`
 
-The workspace contains two folders by default, where:
+- `DatabaseMenu.java` has the code for the command line interface. <br>
+- `StoredProcedures.java` contains the code for all the stored procedures
 
-- `src`: the folder to maintain sources
-- `lib`: the folder to maintain dependencies
+Everything related to the GUI is located inside `MainCode/src/dbproject/gui/`
 
-Meanwhile, the compiled output files will be generated in the `bin` folder by default.
-
-> If you want to customize the folder structure, open `.vscode/settings.json` and update the related settings there.
-
-## Dependency Management
-
-The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
+A more detailed guide on how to run our command line UI / extra credit GUI can be found inside of our submitted Project Report in the "User Manual" section.
